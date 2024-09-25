@@ -25,10 +25,10 @@ namespace Netherlands3D.Twin
         void Update()
         {
             // Check if the camera is within the AOI
-            CheckCameraPosition();
+            //CheckCameraPosition();
         }
 
-        void CheckCameraPosition()
+        /*void CheckCameraPosition()
         {
             // this is what is still not working, and what I asked Mike about in the meeting
             var cameraPositionRealWorld = worldTransform.Coordinate(transform.position);
@@ -51,6 +51,6 @@ namespace Netherlands3D.Twin
         {
             return lat >= minLatLon.x && lat <= maxLatLon.x &&
                    lon >= minLatLon.y && lon <= maxLatLon.y;
-        }
+        }*/
     }
 }
