@@ -79,7 +79,7 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] private float focusAngle = 45.0f;
     [SerializeField] private float focusDistanceMultiplier = 2.0f;
     [SerializeField] private bool limitToAOI = false;
-    [SerializeField] private AreaOfInterest aoi;
+    [SerializeField] private AOI aoi;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
