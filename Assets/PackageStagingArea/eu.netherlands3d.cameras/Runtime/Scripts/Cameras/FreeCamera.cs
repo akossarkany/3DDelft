@@ -79,7 +79,7 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] private float focusAngle = 45.0f;
     [SerializeField] private float focusDistanceMultiplier = 2.0f;
     [SerializeField] private bool limitToAOI = false;
-    [SerializeField] private AOI aoi;
+    [SerializeField] private PolyAreaOfInterest aoi;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
@@ -125,6 +125,7 @@ public class FreeCamera : MonoBehaviour
         if(blockCameraDrag) blockCameraDrag.AddListenerStarted(LockDragging);
         if(ortographicEnabled) ortographicEnabled.AddListenerStarted(EnableOrtographic);
         if(focusOnObject) focusOnObject.AddListenerStarted(FocusOnObject);
+        if (limitToAOI) aoi.LoadBoundary();
     }
 
     /// <summary>
@@ -289,7 +290,7 @@ public class FreeCamera : MonoBehaviour
         if (!aoi.isInside())
         {
             this.transform.SetPositionAndRotation(previousPosition, previousRotation);
-            Debug.Log("Out of bounds. Position reverted.");
+            //Debug.Log("Out of bounds. Position reverted.");
         }
     }
 

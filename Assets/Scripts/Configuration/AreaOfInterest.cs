@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Netherlands3D.Twin
 {
     [CreateAssetMenu(fileName = "AOI", menuName = "ScriptableObjects/AOI/Box")]
-    public class AreaOfInterest : ScriptableObject, AOI
+    public class AreaOfInterest : ScriptableObject
     {
         public Vector2 min;
         public Vector2 max;
