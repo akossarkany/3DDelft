@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 299e8df624a80ae4e901a5b3f51499d5, type: 3}
-  m_Name: AOI_DELFT
+  m_Script: {fileID: 11500000, guid: bf5f752505b5f13459fe6733c670856e, type: 3}
+  m_Name: Delft
   m_EditorClassIdentifier: 
-  min: {x: 75600, y: 441454}
-  max: {x: 91276, y: 454851}
+  fileURL: 3ddelft01.bk.tudelft.nl/aoi.geojson

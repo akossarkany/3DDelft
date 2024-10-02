@@ -1097,7 +1097,7 @@ PrefabInstance:
         type: 3}
       propertyPath: aoi
       value: 
-      objectReference: {fileID: 11400000, guid: 6bf3c51cecd35d7438b4af5e240691c9,
+      objectReference: {fileID: 11400000, guid: 8195520fe228fd644817c59c4452be27,
         type: 2}
     - target: {fileID: 5315891981602308677, guid: 0f6ad95dabe72044aa90eb8ae2e45366,
         type: 3}

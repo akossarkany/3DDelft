@@ -125,7 +125,7 @@ public class FreeCamera : MonoBehaviour
         if(blockCameraDrag) blockCameraDrag.AddListenerStarted(LockDragging);
         if(ortographicEnabled) ortographicEnabled.AddListenerStarted(EnableOrtographic);
         if(focusOnObject) focusOnObject.AddListenerStarted(FocusOnObject);
-        if (limitToAOI) aoi.LoadBoundary();
+        if (limitToAOI) aoi.LoadBoundary(this);
     }
 
     public bool LimitToAOI { get { return this.LimitToAOI;  } }
@@ -151,7 +151,6 @@ public class FreeCamera : MonoBehaviour
     /// <param name="focusObject"></param>
     public void FocusOnObject(GameObject focusObject)
     {
-        //StorePreviousTransform();
         this.transform.position = focusObject.transform.position;
         this.transform.eulerAngles = new Vector3((cameraComponent.orthographic) ? 90 : focusAngle, 0, 0);
 
@@ -165,7 +164,6 @@ public class FreeCamera : MonoBehaviour
         {
             this.transform.Translate(Vector3.back * focusDistanceMultiplier, Space.Self);
         }
-        //RevertIfOutOfBounds();
 
     }
 
@@ -242,7 +240,8 @@ public class FreeCamera : MonoBehaviour
     }
 
     /// <summary>
-    /// Stores previous transform position to reset to after moves that cross the bounds
+    /// Stores previous transform position to reset to after moves that cross the bounds.
+    /// If AOI is active it only stores valid position, i.e. that is in bounds
     /// </summary>
     private void StorePreviousTransform()
 	{
@@ -277,7 +276,6 @@ public class FreeCamera : MonoBehaviour
             this.transform.RotateAround(dragStart, this.transform.right, -pointerDelta.y * rotateAroundPointSpeed);
             RevertIfOverAxis();
         }
-        //RevertIfOutOfBounds();
     }
 
     /// <summary>
@@ -295,11 +293,18 @@ public class FreeCamera : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reverts the position of the camera to the value stored in this.previousPosition
+    /// </summary>
     private void RevertIfOutOfBounds()
     {
-        SetIfOutOfBounds(previousPosition);
+        SetIfOutOfBounds(this.previousPosition);
     }
 
+    /// <summary>
+    /// Sets the position of the camera to the position stored in the function argument.
+    /// </summary>
+    /// <param name="pos"> the new position of the camera</param>
     public void SetIfOutOfBounds(Vector3 pos)
     {
         if ( limitToAOI && !aoi.isInside())
@@ -315,11 +320,9 @@ public class FreeCamera : MonoBehaviour
     /// <param name="value">Joystick or gamepad style input</param>
 	public void FreeFly(Vector3 value)
     {
-        //StorePreviousTransform();
         StopEasing();
         CalculateSpeed();
         this.transform.Translate(value.x * gamepadMoveSpeed * Time.deltaTime, 0, value.y * gamepadMoveSpeed * Time.deltaTime, Space.Self);
-        //RevertIfOutOfBounds();
     }
 
     /// <summary>
@@ -343,12 +346,14 @@ public class FreeCamera : MonoBehaviour
 
     void Update()
 	{
+        // Store previous transform 
         StorePreviousTransform();   
         EaseDragTarget();
         if (!lockDraggingInput)
         {
             Clamp();
         }
+        // Revert if changes moved camera out of bounds
         RevertIfOutOfBounds();
     }
 
@@ -373,13 +378,11 @@ public class FreeCamera : MonoBehaviour
     /// </summary>
 	private void EaseDragTarget()
 	{
-        //StorePreviousTransform();
         dragVelocity = new Vector3(Mathf.Lerp(dragVelocity.x,0, Time.deltaTime * easing), 0, Mathf.Lerp(dragVelocity.z, 0, Time.deltaTime * easing));
         if (!dragging && dragVelocity.magnitude > 0)
         {
             this.transform.Translate(-dragVelocity * Time.deltaTime * dragSpeed,Space.World);
 		}
-        //RevertIfOutOfBounds();
 	}
 
     /// <summary>
@@ -396,7 +399,6 @@ public class FreeCamera : MonoBehaviour
     /// <param name="isDragging"></param>
 	public void Drag(bool isDragging)
 	{
-        //StorePreviousTransform();
         if (!dragToMoveCamera) return;
         if(lockDraggingInput)
         {
@@ -428,7 +430,6 @@ public class FreeCamera : MonoBehaviour
             dragVelocity = (previousPosition - this.transform.position) / Time.deltaTime;
         }
         dragging = isDragging;
-        //RevertIfOutOfBounds();
     }
 
     /// <summary>
@@ -437,7 +438,6 @@ public class FreeCamera : MonoBehaviour
     /// <param name="amount">Zoom delta where 1 is towards, and -1 is backing up from zoompoint</param>
 	public void ZoomToPointer(float amount)
 	{
-        //StorePreviousTransform();
         rotatingAroundPoint = false;
 
         CalculateSpeed();
@@ -452,7 +452,6 @@ public class FreeCamera : MonoBehaviour
         if (targetIsBehind) direction = -direction;
 
         this.transform.Translate(direction.normalized * dynamicZoomSpeed * amount, Space.World);
-        //RevertIfOutOfBounds();
 	}
 
 	/// <summary>
@@ -489,12 +488,10 @@ public class FreeCamera : MonoBehaviour
     /// <param name="amount"></param>
     public void MoveHorizontally(float amount)
 	{
-        //StorePreviousTransform();
         StopEasing();
 
         CalculateSpeed();
 		this.transform.Translate(Vector3.right * amount * dynamicMoveSpeed * Time.deltaTime, Space.Self);
-        //RevertIfOutOfBounds();
 	}
 
     /// <summary>
@@ -503,7 +500,6 @@ public class FreeCamera : MonoBehaviour
     /// <param name="amount"></param>
 	public void MoveForwardBackwards(float amount)
     {
-        //StorePreviousTransform();
         StopEasing();
 
         CalculateSpeed();
@@ -513,7 +509,6 @@ public class FreeCamera : MonoBehaviour
             forwardDirection.y = 0;
         }
         this.transform.Translate(forwardDirection.normalized * amount * dynamicMoveSpeed * Time.deltaTime, Space.World);
-        //RevertIfOutOfBounds();
     }
 
     /// <summary>

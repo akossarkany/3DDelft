@@ -8,12 +8,13 @@ namespace Netherlands3D.Twin
     [CreateAssetMenu(fileName = "AOI", menuName = "ScriptableObjects/AOI/Polyline")]
     public class PolyAreaOfInterest : ScriptableObject
     {
-        [SerializeField] public string localFile;
+        [SerializeField] public string fileURL;
         [SerializeField] public AOIGeometry geometry = new AOIGeometry();
 
-        public void LoadBoundary()
+        public void LoadBoundary(MonoBehaviour coroutineRunner)
         {
-            if (!geometry.Loaded) geometry.Load(localFile);
+            Debug.Log("Initialize boundary");
+            if (!geometry.Loaded) coroutineRunner.StartCoroutine(geometry.Load(fileURL));
         }
 
 

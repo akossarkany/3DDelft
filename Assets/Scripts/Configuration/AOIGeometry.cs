@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.IO;
 
@@ -10,12 +11,14 @@ namespace Netherlands3D.Twin
     {
         private bool loaded;
         private bool isValid;
+        private bool isLoading;
         private List<Vector2> boundary;
 
         public AOIGeometry()
         { 
             this.loaded = false;
             this.isValid = false;
+            this.isLoading = false;
             this.boundary = new List<Vector2> ();
         }
 
@@ -23,15 +26,42 @@ namespace Netherlands3D.Twin
         public bool IsValid { get { return this.isValid; } }
         public List<Vector2> Boundary { get { return this.boundary; } }
 
-        public void Load(string localFile)
-        {
-            // Check if the file has JSON content
-            if (!LooksLikeAJSONFile(localFile))
-                return;
 
+        public IEnumerator Load(string fileURL)
+        {
+            Debug.Log("Creating Web Request.");
+            this.isLoading = true;
+            using (UnityWebRequest File = UnityWebRequest.Get(fileURL))
+            {
+                // Development only
+                var cert = new ForceAcceptAll();
+                File.certificateHandler = cert;
+
+
+                Debug.Log("Requesting AOI.");
+                yield return File.SendWebRequest();
+                Debug.Log("AOI recieved.");
+                if (File.result == UnityWebRequest.Result.Success)
+                {
+                    // Check if the file has JSON content
+                    if (LooksLikeAJSONFile(File.downloadHandler.text))
+                    {
+                        ParseAOI(File.downloadHandler.text);
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Failed to load AOI from server. Error: " + File.error);
+                }
+            }
+            this.isLoading = false;
+        }
+
+        private void ParseAOI(string file)
+        {
             Debug.Log("Reading AOI");
             // Streamread the JSON until we find some GeoJSON properties
-            using var reader = new StreamReader(localFile);
+            using var reader = new StringReader(file);
             using var jsonReader = new JsonTextReader(reader);
 
             while (jsonReader.Read())
@@ -74,17 +104,26 @@ namespace Netherlands3D.Twin
             }
             this.loaded = true;
             this.isValid = this.boundary.Count > 0;
-            return;
 
         }
 
-        private bool LooksLikeAJSONFile(string filePath)
+        private bool LooksLikeAJSONFile(string text)
         {
-            using var reader = new StreamReader(filePath);
-            var firstChar = reader.Read();
-            return firstChar == '{' || firstChar == '[';
+            return text[0] == '{' || text[0] == '[';
         }
 
 
+    }
+
+
+    /// <summary>
+    /// For development only. Once released the server should have a valid CA certificate.
+    /// </summary>
+    public class ForceAcceptAll : CertificateHandler
+    {
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            return true;
+        }
     }
 }
