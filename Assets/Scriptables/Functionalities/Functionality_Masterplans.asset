@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 714e859e1c414d479484fe937804ce24, type: 3}
+  m_Name: Functionality_Masterplans
+  m_EditorClassIdentifier: 
+  data:
+    Id: masterplans
+    IsEnabled: 1
+  Title: Masterplans
+  Caption: 
+  Header: Toekomstige Masterplans
+  Description: "Deze kaartlaag toont alle goedgekeurde masterplannen in Delft. Deze
+    functionaliteit vereist een 3D-model in een .obj-bestand, dat wordt geleverd
+    door de Gemeente Delft. Daarnaast is het ook noodzakelijk om een .csv-bestand
+    te uploaden met de volgende gegevens van het model:\n- \n- \n- \n\n<i>\nBron:
+    Models geleverd door de Gemeente Delft\nDatum: invullen \nActualisatie: jaarlijks\n</i>"
+  configuration: {fileID: 0}
+  OnEnable:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDisable:
+    m_PersistentCalls:
+      m_Calls: []

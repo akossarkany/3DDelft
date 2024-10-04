@@ -20,6 +20,7 @@ MonoBehaviour:
   - 462762.0704803467
   - 300
   CameraRotation:
+<<<<<<< Updated upstream
   - 60.000003814697266
   - 0
   - 0
@@ -29,4 +30,47 @@ MonoBehaviour:
     color: {r: 0.3372549, g: 0.62352943, b: 0.8901961, a: 1}
     children: []
     layerProperties: []
+=======
+  - 29.401296615600586
+  - 9.200553894042969
+  - 0.00004899971099803224
+  UseCurrentTime: 0
+  functionalities:
+  - Id: terrein
+    IsEnabled: 1
+  - Id: gebouwen
+    IsEnabled: 1
+  - Id: bomen-en-bospercelen
+    IsEnabled: 1
+  - Id: straatnamen
+    IsEnabled: 0
+  - Id: buurtnamen
+    IsEnabled: 0
+  - Id: wijknamen
+    IsEnabled: 0
+  - Id: gebouw-informatie
+    IsEnabled: 1
+  - Id: downloaden-3d-gebied
+    IsEnabled: 1
+  - Id: maak-screenshots
+    IsEnabled: 1
+  - Id: 3d-modellen-toevoegen
+    IsEnabled: 1
+  - Id: indicatoren
+    IsEnabled: 0
+  - Id: gebouwen-kleuren
+    IsEnabled: 1
+  - Id: objectenbibliotheek
+    IsEnabled: 1
+  - Id: minimap
+    IsEnabled: 1
+  - Id: 3d-tiles
+    IsEnabled: 1
+  - Id: google-realitymesh
+    IsEnabled: 1
+  - Id: zonnestand-simuleren
+    IsEnabled: 1
+  - Id: urbanreleaf
+    IsEnabled: 1
+>>>>>>> Stashed changes
   PrefabLibrary: {fileID: 11400000, guid: 03a0c2ac495a64c08b5dd612c9507bd7, type: 2}
