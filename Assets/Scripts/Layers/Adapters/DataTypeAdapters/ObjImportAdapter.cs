@@ -3,6 +3,7 @@ using Netherlands3D.Twin.Layers;
 using Netherlands3D.Twin.Layers.Properties;
 using Netherlands3D.Twin.Projects;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.Twin
 {
@@ -10,6 +11,7 @@ namespace Netherlands3D.Twin
     public class ObjImportAdapter : ScriptableObject, IDataTypeAdapter
     {
         [SerializeField] private ObjSpawner layerPrefab;
+        [SerializeField] private UnityEvent<string, ObjSpawner> loadMetaData;
 
         public bool Supports(LocalFile localFile)
         {
@@ -25,6 +27,13 @@ namespace Netherlands3D.Twin
 
             var propertyData = newLayer.PropertyData as ObjPropertyData;
             propertyData.ObjFile = AssetUriFactory.CreateProjectAssetUri(fullPath);
+
+            if (this.loadMetaData != null)
+            {
+                loadMetaData.Invoke(fileName.Split(".")[0], newLayer);
+            }
+
+
         }
     }
 }
