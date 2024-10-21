@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6145c0f4c7b374b7abe8bf0d2f19fe2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minDistance: -120.1
+  minDistance: 100
   maxDistance: 1000
   minCamHeightMultiplier: 0.1
   maxCamHeightMultiplier: 50

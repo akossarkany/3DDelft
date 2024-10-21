@@ -10,7 +10,6 @@ using UnityEngine.Events;
 using UnityEngine.Networking;
 using Netherlands3D.Indicators.Dossiers.DataLayers;
 using Netherlands3D.Indicators.Esri;
-using System.Collections.Generic;
 
 namespace Netherlands3D.Indicators
 {
@@ -327,4 +326,3 @@ namespace Netherlands3D.Indicators
         }
     }
 }
-
