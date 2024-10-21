@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: ProjectData
   m_EditorClassIdentifier: 
   Version: 1
-  SavedTimestamp: 20241002112317
-  UUID: af3d1373-b23f-40ce-b6f9-35148881412d
+  SavedTimestamp: 20241002115726
+  UUID: b0d298ff-ce79-4163-aa31-884a05aa5f77
   CameraRotation:
-  - 43.10011291503906
-  - 0.7000778913497925
-  - -0.00000153469977703935
+  - 44.30010223388672
+  - 2.6001219749450684
+  - 0.00006889200449222699
   UseCurrentTime: 0
   functionalities:
   - Id: terrein
@@ -52,7 +52,7 @@ MonoBehaviour:
   - Id: 3d-tiles
     IsEnabled: 1
   - Id: google-realitymesh
-    IsEnabled: 1
+    IsEnabled: 0
   - Id: zonnestand-simuleren
     IsEnabled: 1
   - Id: urbanreleaf
