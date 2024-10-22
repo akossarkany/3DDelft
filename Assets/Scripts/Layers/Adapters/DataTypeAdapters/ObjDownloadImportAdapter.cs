@@ -7,10 +7,12 @@ using UnityEngine.Events;
 
 namespace Netherlands3D.Twin
 {
-    [CreateAssetMenu(menuName = "Netherlands3D/Adapters/OBJImportAdapter", fileName = "OBJImportAdapter", order = 0)]
-    public class ObjImportAdapter : ScriptableObject, IDataTypeAdapter
+    [CreateAssetMenu(menuName = "Netherlands3D/Adapters/OBJDownloadImportAdapter", fileName = "OBJDownloadImportAdapter", order = 0)]
+    public class ObjDownloadImportAdapter : ScriptableObject, IDataTypeAdapter
     {
         [SerializeField] private ObjSpawner layerPrefab;
+
+        [SerializeField] private UnityEvent<string, ObjSpawner> loadMetaData;
 
         public bool Supports(LocalFile localFile)
         {
@@ -27,6 +29,10 @@ namespace Netherlands3D.Twin
             var propertyData = newLayer.PropertyData as ObjPropertyData;
             propertyData.ObjFile = AssetUriFactory.CreateProjectAssetUri(fullPath);
 
+            if (this.loadMetaData != null)
+            {
+                loadMetaData.Invoke(fileName.Split(".")[0], newLayer);
+            }
 
         }
     }

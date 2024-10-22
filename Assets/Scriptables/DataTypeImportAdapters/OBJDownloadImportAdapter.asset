@@ -9,24 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff809030785a2aa418ffca29baca8ca1, type: 3}
-  m_Name: ObjDownloadAdapter
+  m_Script: {fileID: 11500000, guid: 76d5e7623f5a60b4fa2ab4109310742c, type: 3}
+  m_Name: OBJDownloadImportAdapter
   m_EditorClassIdentifier: 
-  RemoteHost: 3ddelf01.bk.tudelft.nl
-  Port: 80
-  QueryEndpoint: queryall
-  MetaEndpoint: download/meta
-  ObjEndpoint: download/object
-  fileAdapter:
+  layerPrefab: {fileID: 739909529550263350, guid: 34882a73ff6122243a0e3e9811473e20,
+    type: 3}
+  loadMetaData:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: 6558aaaeb70ee44688f49da028828a19, type: 2}
-        m_TargetAssemblyTypeName: Netherlands3D.Twin.FileTypeAdapter, Assembly-CSharp
-        m_MethodName: ProcessFile
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

@@ -7,6 +7,7 @@ using System.IO;
 using System;
 using UnityEngine.Events;
 using Netherlands3D.Twin.Layers;
+using Netherlands3D.DB;
 
 namespace Netherlands3D.Twin
 {
@@ -25,8 +26,6 @@ namespace Netherlands3D.Twin
         public IEnumerator LoadRemoteObjects(ObjDownloader caller)
         {
             string url = "https://" + this.RemoteHost + ":" + this.Port + "/" + QueryEndpoint;
-            string tempPath = Path.GetTempPath();
-            tempPath = Path.Combine(tempPath, "objects");
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 // Development only
@@ -45,13 +44,13 @@ namespace Netherlands3D.Twin
                         if (jsonObj != null)
                         {
                             Debug.Log("Requesting object: " + jsonObj.obj_id);
-                            caller.StartCoroutine(DownloadObjFile(tempPath, jsonObj.obj_id));
+                            caller.StartCoroutine(DownloadObjFile(jsonObj.obj_id));
                         }
                         Debug.LogError("Json object was null.");
 
 
                         // Spawn new game object. the name of the object will be the file name
-                        fileAdapter.Invoke(Path.Combine(tempPath, jsonObj.obj_id + ".obj"));
+                        fileAdapter.Invoke(jsonObj.obj_id + ".download");
                     }
 
                 }
@@ -64,7 +63,7 @@ namespace Netherlands3D.Twin
         }
 
 
-        IEnumerator DownloadObjFile(string tempPath, string fileName)
+        IEnumerator DownloadObjFile(string fileName)
         {
             string url = "https://" + this.RemoteHost + ":" + this.Port + "/" + this.ObjEndpoint + "/" + fileName;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -77,17 +76,8 @@ namespace Netherlands3D.Twin
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     string objFileContent = request.downloadHandler.text;
-                    string tempFilePath = Path.Combine(tempPath, fileName + ".obj");
 
-                    try
-                    {
-                        File.WriteAllText(tempFilePath, objFileContent);
-                        Debug.Log("File saved to: " + tempFilePath);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError("Failed to save file: " + e.Message);
-                    }
+                    ObjectDB.insert(fileName, objFileContent);
                 }
                 else
                 {
