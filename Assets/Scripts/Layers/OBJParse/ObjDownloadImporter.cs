@@ -4,13 +4,16 @@ using Netherlands3D.ObjImporter.General;
 using Netherlands3D.ObjImporter.General.GameObjectDataSet;
 using Netherlands3D.ObjImporter.ParseMTL;
 using Netherlands3D.ObjImporter.ParseOBJ;
+using Netherlands3D.Twin;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 namespace Netherlands3D.ObjImporter
 {
     public class ObjDownloadImporter : MonoBehaviour
     {
+        [SerializeField] private GameObject downloader;
         StreamreadInMemoryOBJ objreader;
         ReadMTL mtlreader;
         CreateGameObjectDataSetFromOBJ objectDataCreator;
@@ -22,6 +25,7 @@ namespace Netherlands3D.ObjImporter
         public Material BaseMaterial;
         [HideInInspector]
         public string objFilePath = "";
+        private string exObjFilePath = "";
 
         [HideInInspector]
         public string mtlFilePath = "";
@@ -73,6 +77,8 @@ namespace Netherlands3D.ObjImporter
         //reading obj-file
         public void StartImporting(System.Action<GameObject> returnResultTo)
         {
+            downloader = GameObject.Find("ObjDownloader");
+            if (downloader != null) { Debug.LogError("Downloader not found"); }
             needToCancel = false;
             returnObjectTo = returnResultTo;
             if (isbusy)
@@ -107,6 +113,7 @@ namespace Netherlands3D.ObjImporter
 
         private void OnOBJRead(bool succes)
         {
+            exObjFilePath = objFilePath;
             if (!succes) //something went wrong
             {
                 isbusy = false;
@@ -116,7 +123,7 @@ namespace Netherlands3D.ObjImporter
                 returnObjectTo(null);
                 return;
             }
-            createdGameobjectIsMoveable = !objreader.ObjectUsesRDCoordinates;
+            createdGameobjectIsMoveable = !objreader.ObjectUsesRDCoordinates; // Make this depend on authentication status
 
 
             if (mtlFilePath != "")
@@ -191,7 +198,7 @@ namespace Netherlands3D.ObjImporter
         void OnGameObjectDataSetCreated(GameObjectDataSet gods)
         {
             gameObjectData = gods;
-            gods.name = System.IO.Path.GetFileName(objFilePath).Replace(".obj", "");
+            gods.name = System.IO.Path.GetFileName(objFilePath).Replace(".download", "");
             objFilePath = "";
             if (needToCancel)
             {
@@ -229,6 +236,15 @@ namespace Netherlands3D.ObjImporter
 
         void OnGameObjectCreated(GameObject gameObject)
         {
+            if (downloader != null)
+            {
+                downloader.GetComponent<ObjDownloader>().LoadMetaInformation(exObjFilePath.Split('.')[0], gameObject);
+                exObjFilePath = "";
+            }
+            else
+            {
+                Debug.LogError("Metadata could not be loaded for: " + objFilePath);
+            }
             returnObjectTo(gameObject);
         }
     }

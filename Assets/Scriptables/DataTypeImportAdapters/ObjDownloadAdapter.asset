@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff809030785a2aa418ffca29baca8ca1, type: 3}
   m_Name: ObjDownloadAdapter
   m_EditorClassIdentifier: 
-  RemoteHost: 3ddelf01.bk.tudelft.nl
+  RemoteHost: 3ddelft01.bk.tudelft.nl
   Port: 80
   QueryEndpoint: queryall
   MetaEndpoint: download/meta

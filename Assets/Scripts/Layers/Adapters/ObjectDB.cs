@@ -33,11 +33,11 @@ namespace Netherlands3D.DB
 
         public static MemoryStream stream(string key)
         {
-            key = clearKey(key);
-            if (DB.ContainsKey(key))
+            if (ObjectDB.DB.ContainsKey(clearKey(key)))
             {
                 return new MemoryStream(DB[key]);
             }
+            Debug.LogError("Key '" + key + "' does not exists.");
             return null;
         }
 

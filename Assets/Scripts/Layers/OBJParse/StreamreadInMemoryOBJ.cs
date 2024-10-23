@@ -179,6 +179,11 @@ namespace Netherlands3D.ObjImporter.ParseOBJ
             //    return;
             //}
 
+            if (filename.EndsWith(".download"))
+            {
+                filename = filename.Split('.')[0];
+            }
+            fileNameWithoutExtention = filename;
             StartCoroutine(StreamReadFile(filename, callback));
         }
 
@@ -229,7 +234,7 @@ namespace Netherlands3D.ObjImporter.ParseOBJ
                     uvs.EndWriting();
 
                     rawdata.EndWriting();
-                    File.Delete(filename);
+                    //File.Delete(filename);
                     rollback();
                     isFinished = true;
                     lineRead = false;
@@ -247,7 +252,7 @@ namespace Netherlands3D.ObjImporter.ParseOBJ
 
             rawdata.EndWriting();
 
-            File.Delete(filename);
+            //File.Delete(filename);
             isFinished = true;
             callback(true);
         }

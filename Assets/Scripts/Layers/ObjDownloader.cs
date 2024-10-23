@@ -15,7 +15,7 @@ namespace Netherlands3D.Twin
         // Start is called before the first frame update
         void Start()
         {
-        
+            StartCoroutine(remoteAdapter.LoadRemoteObjects(this));
         }
 
         // Update is called once per frame
@@ -26,11 +26,12 @@ namespace Netherlands3D.Twin
 
         private void OnEnable()
         {
-            StartCoroutine(remoteAdapter.LoadRemoteObjects(this));
+            
         }
 
-        public void LoadMetaInformation(string ObjectID, ObjSpawner newLayer)
+        public void LoadMetaInformation(string ObjectID, GameObject newLayer)
         {
+            Debug.Log("Start reading metadata for '" + ObjectID + "'");
             if (jsonObjectList.Contains(new JsonObjID(ObjectID)))
             {
                 StartCoroutine(remoteAdapter.DownloadFileMetadata(ObjectID, newLayer));
@@ -49,9 +50,9 @@ namespace Netherlands3D.Twin
 
         public override bool Equals(object obj)
         {
-            if (obj is JsonObjID)
+            if (obj is JsonObjID iD)
             {
-                return this.obj_id == ((JsonObjID) obj).obj_id;
+                return this.obj_id == iD.obj_id;
             }
             return false;
         }
@@ -59,6 +60,11 @@ namespace Netherlands3D.Twin
         public override int GetHashCode()
         {
             return obj_id == null ? 0 : obj_id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return this.obj_id;
         }
 
 
