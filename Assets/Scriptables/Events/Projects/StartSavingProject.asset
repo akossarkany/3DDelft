@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f328a3b0832b641bb6be0a57ec68a9, type: 3}
   m_Name: StartSavingProject
   m_EditorClassIdentifier: 
-  eventName: 
+  eventName: StartSavingProject
   description: 
