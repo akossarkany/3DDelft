@@ -7,10 +7,10 @@ using Newtonsoft.Json;  // Use Unity's JsonUtility if you prefer, or add Newtons
 
 public class SaveToDB : MonoBehaviour
 {
-    [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
-    private string postUrl = "https://your-database-api-url.com/api/save"; // POST request URL
+    [SerializeField] private string saveDirectory = "/upload/object";  // Directory to save models and metadata
+    private string postUrl = ""; // POST request URL LOCAL HOST???
 
-    public void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale, Vector3 rdnPosition)
+    public void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
     {
         // Create directory if it doesn't exist
         if (!Directory.Exists(saveDirectory))
@@ -27,23 +27,13 @@ public class SaveToDB : MonoBehaviour
         // 2. Create metadata object and serialize to JSON
         var metadata = new BuildingMetadata
         {
+            obj_id = "uuid",
             name = modelName,
             description = description,
-            location = new GeoPoint(rdnPosition.x, rdnPosition.y, rdnPosition.z),
-            local_x = localPosition.x,
-            local_y = localPosition.y,
-            local_z = localPosition.z,
-            rotation_x = rotation.x,
-            rotation_y = rotation.y,
-            rotation_z = rotation.z,
-            scale_x = scale.x,
-            scale_y = scale.y,
-            scale_z = scale.z,
-            obj_file_path = objFilePath,
-            rdn_x = rdnPosition.x,
-            rdn_y = rdnPosition.y,
-            rdn_z = rdnPosition.z,
-            additional_metadata = new AdditionalMetadata() // Add additional data if necessary
+            position = new GeoPoint(localPosition.x, localPosition.y, localPosition.z),
+            rotation = new GeoPoint(rotation.x, rotation.y, rotation.z),
+            scale = new GeoPoint(scale.x, scale.y, scale.z),
+            is_masterplan = true
         };
 
         string jsonMetadata = JsonConvert.SerializeObject(metadata, Formatting.Indented);
@@ -63,7 +53,10 @@ public class SaveToDB : MonoBehaviour
     {
         WWWForm form = new WWWForm();
         form.AddField("metadata", jsonMetadata);
-        form.AddField("objFilePath", objFilePath);
+
+        // Dodanie pliku OBJ do formularza
+        byte[] objFileData = File.ReadAllBytes(objFilePath);
+        form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "application/octet-stream");
 
         using (UnityWebRequest www = UnityWebRequest.Post(postUrl, form))
         {
@@ -84,23 +77,13 @@ public class SaveToDB : MonoBehaviour
     [System.Serializable]
     public class BuildingMetadata
     {
-        public string name;
-        public string description;
-        public GeoPoint location;
-        public float local_x;
-        public float local_y;
-        public float local_z;
-        public float rotation_x;
-        public float rotation_y;
-        public float rotation_z;
-        public float scale_x = 1.0f;
-        public float scale_y = 1.0f;
-        public float scale_z = 1.0f;
-        public string obj_file_path;
-        public float rdn_x;
-        public float rdn_y;
-        public float rdn_z;
-        public AdditionalMetadata additional_metadata;
+        public string obj_id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+        public GeoPoint position { get; set; }
+        public GeoPoint rotation { get; set; }
+        public GeoPoint scale { get; set; }
+        public bool is_masterplan { get; set; }
     }
 
     [System.Serializable]
@@ -128,12 +111,11 @@ public class SaveToDB : MonoBehaviour
     {
         GameObject model = GameObject.Find("YourModelName");  // Change to GameObject name, which you want to save
         string modelName = "SampleModel";
-        string description = "Opis modelu";
+        string description = "Description";
         Vector3 localPosition = new Vector3(0, 0, 0);
         Vector3 rotation = new Vector3(0, 0, 0);
         Vector3 scale = new Vector3(1, 1, 1);
-        Vector3 rdnPosition = new Vector3(0, 0, 0);
 
-        SaveModelToDirectory(model, modelName, description, localPosition, rotation, scale, rdnPosition);
+        SaveModelToDirectory(model, modelName, description, localPosition, rotation, scale);
     }
 }

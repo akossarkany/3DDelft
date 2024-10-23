@@ -7,8 +7,8 @@ public class LoginManager : MonoBehaviour
 {
     [SerializeField] private Button loginButton;
     [SerializeField] private Button saveButton; // Initially disabled
-    private string loginUrl = "https://your-login-server.com/login"; // Replace with your actual login URL
-    private string authCheckUrl = "https://your-server.com/auth-check"; // Endpoint to check if user is authenticated
+    private string loginUrl = "https://3ddelft01.bk.tudelft.nl:80/login";
+    private string authCheckUrl = "https://3ddelft01.bk.tudelft.nl:80/login"; // Endpoint to check if user is authenticated
 
     private bool isAuthenticated = false;
 
@@ -26,7 +26,7 @@ public class LoginManager : MonoBehaviour
     }
 
     // This method should be called once the user is redirected back to the Unity WebGL app after login
-    public void OnLoginCallback(string token)
+    public void OnLoginCallback(string token) 
     {
         StartCoroutine(CheckAuthentication(token));
     }
@@ -34,11 +34,10 @@ public class LoginManager : MonoBehaviour
     // This coroutine checks the authentication token
     private IEnumerator CheckAuthentication(string token)
     {
-        WWWForm form = new WWWForm();
-        form.AddField("token", token);
-
-        using (UnityWebRequest www = UnityWebRequest.Post(authCheckUrl, form))
+        using (UnityWebRequest www = UnityWebRequest.Post(authCheckUrl, new WWWForm()))
         {
+            www.SetRequestHeader("Authorization", $"Bearer {token}");
+
             yield return www.SendWebRequest();
 
             if (www.result == UnityWebRequest.Result.Success && www.downloadHandler.text == "authenticated")
