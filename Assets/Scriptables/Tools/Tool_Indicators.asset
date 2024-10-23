@@ -20,16 +20,15 @@ MonoBehaviour:
   onAvailabilityChange:
     m_PersistentCalls:
       m_Calls: []
-  onActivate:
+  onOpen:
     m_PersistentCalls:
       m_Calls: []
-  onDeactivate:
+  onClose:
     m_PersistentCalls:
       m_Calls: []
   onToggleInspector:
     m_PersistentCalls:
       m_Calls: []
-  activateToolOnInspectorToggle: 1
   inspectorPrefab: {fileID: 4890024140017281850, guid: c18057bd7c4172b4c8b2447dbf8456ca,
     type: 3}
   functionalityPrefabs: []

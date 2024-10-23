@@ -3,6 +3,7 @@ using Netherlands3D.Twin.Layers;
 using Netherlands3D.Twin.Layers.Properties;
 using Netherlands3D.Twin.Projects;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Netherlands3D.Twin
 {
@@ -25,6 +26,8 @@ namespace Netherlands3D.Twin
 
             var propertyData = newLayer.PropertyData as ObjPropertyData;
             propertyData.ObjFile = AssetUriFactory.CreateProjectAssetUri(fullPath);
+
+
         }
     }
 }
