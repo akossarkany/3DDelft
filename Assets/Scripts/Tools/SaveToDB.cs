@@ -1,16 +1,64 @@
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 using System.Text;
-using Newtonsoft.Json;  // Use Unity's JsonUtility if you prefer, or add Newtonsoft.Json via NuGet or Unity Package Manager
+using Newtonsoft.Json;
 
 public class SaveToDB : MonoBehaviour
 {
-    [SerializeField] private string saveDirectory = "/upload/object";  // Directory to save models and metadata
-    private string postUrl = ""; // POST request URL LOCAL HOST???
+    [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
+    [SerializeField] private string postUrl = "https://3ddelft01.bk.tudelft.nl:8080"; // CHECK
+    [SerializeField] private GameObject modelSpecificationPopup;  // Reference to the popup window
+    [SerializeField] private InputField modelNameInput;
+    [SerializeField] private InputField descriptionInput;
+    [SerializeField] private Text statusMessage; // Text element to display messages to the user
 
-    public void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
+    private GameObject selectedModel;
+
+    private void Start()
+    {
+        modelSpecificationPopup.SetActive(false); // Hide the popup initially
+    }
+
+    // Call this method when the user selects a model
+    public void ShowModelSpecificationPopup(GameObject model)
+    {
+        selectedModel = model;
+
+        // Populate the fields with default values
+        modelNameInput.text = model.name;
+        descriptionInput.text = "Enter a description...";
+
+        // Show the popup window
+        modelSpecificationPopup.SetActive(true);
+    }
+
+    // When the user clicks the "Save" button in the popup
+    public void OnSaveButtonClick()
+    {
+        if (selectedModel == null)
+        {
+            statusMessage.text = "No model selected.";
+            return;
+        }
+
+        string modelName = modelNameInput.text;
+        string description = descriptionInput.text;
+
+        // Fetch actual position, rotation, and scale from the model's Transform
+        Vector3 localPosition = selectedModel.transform.localPosition;
+        Vector3 rotation = selectedModel.transform.localRotation.eulerAngles;
+        Vector3 scale = selectedModel.transform.localScale;
+
+        SaveModelToDirectory(selectedModel, modelName, description, localPosition, rotation, scale);
+
+        // Hide the popup after saving
+        modelSpecificationPopup.SetActive(false);
+    }
+
+    private void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
     {
         // Create directory if it doesn't exist
         if (!Directory.Exists(saveDirectory))
@@ -27,12 +75,12 @@ public class SaveToDB : MonoBehaviour
         // 2. Create metadata object and serialize to JSON
         var metadata = new BuildingMetadata
         {
-            obj_id = "uuid",
+            obj_id = "uuid",  // Generate a unique ID
             name = modelName,
             description = description,
-            position = new GeoPoint(localPosition.x, localPosition.y, localPosition.z),
-            rotation = new GeoPoint(rotation.x, rotation.y, rotation.z),
-            scale = new GeoPoint(scale.x, scale.y, scale.z),
+            position = localPosition,  // Using Vector3 directly
+            rotation = rotation,       // Using Vector3 directly
+            scale = scale,             // Using Vector3 directly
             is_masterplan = true
         };
 
@@ -47,6 +95,7 @@ public class SaveToDB : MonoBehaviour
     {
         // Add your OBJ exporter logic here to save the model in OBJ format
         Debug.Log("OBJ file saved to: " + filePath);
+        statusMessage.text = "OBJ file saved to: " + filePath;
     }
 
     private IEnumerator SendDataToDatabase(string jsonMetadata, string objFilePath)
@@ -54,7 +103,7 @@ public class SaveToDB : MonoBehaviour
         WWWForm form = new WWWForm();
         form.AddField("metadata", jsonMetadata);
 
-        // Dodanie pliku OBJ do formularza
+        // Add the OBJ file to the form
         byte[] objFileData = File.ReadAllBytes(objFilePath);
         form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "application/octet-stream");
 
@@ -65,57 +114,26 @@ public class SaveToDB : MonoBehaviour
             if (www.result == UnityWebRequest.Result.Success)
             {
                 Debug.Log("Data saved to database successfully: " + www.downloadHandler.text);
+                statusMessage.text = "Data saved successfully.";
             }
             else
             {
                 Debug.LogError("Failed to save data: " + www.error);
+                statusMessage.text = "Error: Failed to save data.";
             }
         }
     }
 
-    // Metadata structure
+    // Metadata structure using Vector3
     [System.Serializable]
     public class BuildingMetadata
     {
         public string obj_id { get; set; }
         public string name { get; set; }
         public string description { get; set; }
-        public GeoPoint position { get; set; }
-        public GeoPoint rotation { get; set; }
-        public GeoPoint scale { get; set; }
+        public Vector3 position { get; set; }  // Use Vector3 for position
+        public Vector3 rotation { get; set; }  // Use Vector3 for rotation
+        public Vector3 scale { get; set; }     // Use Vector3 for scale
         public bool is_masterplan { get; set; }
-    }
-
-    [System.Serializable]
-    public class GeoPoint
-    {
-        public float x;
-        public float y;
-        public float z;
-
-        public GeoPoint(float x, float y, float z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-
-    [System.Serializable]
-    public class AdditionalMetadata
-    {
-        // Add any additional metadata here
-    }
-
-    public void OnClickSaveButton()
-    {
-        GameObject model = GameObject.Find("YourModelName");  // Change to GameObject name, which you want to save
-        string modelName = "SampleModel";
-        string description = "Description";
-        Vector3 localPosition = new Vector3(0, 0, 0);
-        Vector3 rotation = new Vector3(0, 0, 0);
-        Vector3 scale = new Vector3(1, 1, 1);
-
-        SaveModelToDirectory(model, modelName, description, localPosition, rotation, scale);
     }
 }

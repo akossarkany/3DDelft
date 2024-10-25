@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Text.RegularExpressions;
+
 
 public class LoginManager : MonoBehaviour
 {
@@ -42,7 +44,12 @@ public class LoginManager : MonoBehaviour
     // Called when the user submits a token via the input field
     private void OnTokenSubmit()
     {
-        string token = tokenInputField.text;
+        // Trim and remove non-visible characters like zero-width spaces, non-breaking spaces, etc.
+        string token = Regex.Replace(tokenInputField.text, @"\s+", "").Trim();
+
+        Debug.Log("Original Token Length: " + tokenInputField.text.Length);
+        Debug.Log("Cleaned Token Length: " + token.Length);
+
         if (!string.IsNullOrEmpty(token))
         {
             Debug.Log("Token submitted: " + token);
@@ -52,7 +59,7 @@ public class LoginManager : MonoBehaviour
             tokenInputField.gameObject.SetActive(false);
             submitTokenButton.gameObject.SetActive(false);
 
-            OnLoginCallback(token);  // Pass the token to the login callback
+            OnLoginCallback(token);  // Pass the cleaned token to the login callback
         }
         else
         {
@@ -61,6 +68,7 @@ public class LoginManager : MonoBehaviour
             StartCoroutine(ClearDebugTextAfterDelay(5)); // Clear debug message after 5 seconds
         }
     }
+
 
     // This method should be called once the user is redirected back to the Unity WebGL app after login
     public void OnLoginCallback(string token)

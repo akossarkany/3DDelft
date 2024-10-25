@@ -1090,6 +1090,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   saveDirectory: Assets/ImportedOBJ_permanent
+  postUrl: 
+  modelSpecificationPopup: {fileID: 0}
+  modelNameInput: {fileID: 0}
+  descriptionInput: {fileID: 0}
+  statusMessage: {fileID: 0}
 --- !u!114 &1349027655 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2144003548613182812, guid: 9963fec33e379324db2affcb3f83332f,
