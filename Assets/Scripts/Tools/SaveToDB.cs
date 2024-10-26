@@ -8,18 +8,37 @@ using Newtonsoft.Json;
 
 public class SaveToDB : MonoBehaviour
 {
-    [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
-    [SerializeField] private string postUrl = "https://3ddelft01.bk.tudelft.nl:8080"; // CHECK
     [SerializeField] private GameObject modelSpecificationPopup;  // Reference to the popup window
+    [SerializeField] private Button toggleMenuButton;  // Button to toggle the popup menu visibility
     [SerializeField] private InputField modelNameInput;
     [SerializeField] private InputField descriptionInput;
     [SerializeField] private Text statusMessage; // Text element to display messages to the user
 
+    [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
+    [SerializeField] private string postUrl = "https://3ddelft01.bk.tudelft.nl:80/upload/object";  // URL for POST request (replace with actual URL)
+
+    private bool isPopupVisible = false;  // Track the popup visibility state
     private GameObject selectedModel;
 
     private void Start()
     {
-        modelSpecificationPopup.SetActive(false); // Hide the popup initially
+        modelSpecificationPopup.SetActive(false); // Initially hide the popup
+        toggleMenuButton.gameObject.SetActive(false); // Hide toggle button until sign-in
+        toggleMenuButton.onClick.AddListener(TogglePopupMenu);  // Add listener to toggle button
+    }
+
+    // This function is called after signing in
+    public void OnSignIn()
+    {
+        // After signing in, show the toggle menu button
+        toggleMenuButton.gameObject.SetActive(true);
+    }
+
+    // Toggles the popup menu visibility
+    private void TogglePopupMenu()
+    {
+        isPopupVisible = !isPopupVisible;
+        modelSpecificationPopup.SetActive(isPopupVisible);  // Toggle the popup's visibility
     }
 
     // Call this method when the user selects a model
@@ -31,7 +50,7 @@ public class SaveToDB : MonoBehaviour
         modelNameInput.text = model.name;
         descriptionInput.text = "Enter a description...";
 
-        // Show the popup window
+        // Ensure the popup is shown
         modelSpecificationPopup.SetActive(true);
     }
 
@@ -41,6 +60,8 @@ public class SaveToDB : MonoBehaviour
         if (selectedModel == null)
         {
             statusMessage.text = "No model selected.";
+            statusMessage.gameObject.SetActive(true);  // Show the status message
+            StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
             return;
         }
 
@@ -56,11 +77,18 @@ public class SaveToDB : MonoBehaviour
 
         // Hide the popup after saving
         modelSpecificationPopup.SetActive(false);
+        isPopupVisible = false;  // Reset popup visibility state
+
+        // Show success message
+        statusMessage.text = "Model saved successfully!";
+        statusMessage.gameObject.SetActive(true);  // Show the status message
+        StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
     }
 
+    // Save the model's metadata and .obj file to a directory
     private void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
     {
-        // Create directory if it doesn't exist
+        // Ensure the directory exists
         if (!Directory.Exists(saveDirectory))
         {
             Directory.CreateDirectory(saveDirectory);
@@ -69,35 +97,36 @@ public class SaveToDB : MonoBehaviour
         string objFilePath = Path.Combine(saveDirectory, modelName + ".obj");
         string jsonFilePath = Path.Combine(saveDirectory, modelName + ".json");
 
-        // 1. Save OBJ file to directory
+        // 1. Save the OBJ file (This part requires an OBJ exporter, replace this with actual OBJ saving logic)
         SaveOBJFile(model, objFilePath);
 
-        // 2. Create metadata object and serialize to JSON
+        // 2. Create a metadata object and serialize to JSON
         var metadata = new BuildingMetadata
         {
-            obj_id = "uuid",  // Generate a unique ID
+            obj_id = System.Guid.NewGuid().ToString(),  // Generate a unique ID
             name = modelName,
             description = description,
-            position = localPosition,  // Using Vector3 directly
-            rotation = rotation,       // Using Vector3 directly
-            scale = scale,             // Using Vector3 directly
+            position = new Vector3(localPosition.x, localPosition.y, localPosition.z),
+            rotation = new Vector3(rotation.x, rotation.y, rotation.z),
+            scale = new Vector3(scale.x, scale.y, scale.z),
             is_masterplan = true
         };
 
         string jsonMetadata = JsonConvert.SerializeObject(metadata, Formatting.Indented);
         File.WriteAllText(jsonFilePath, jsonMetadata, Encoding.UTF8);
 
-        // 3. Send metadata to database
+        // 3. Optionally, send metadata to a database
         StartCoroutine(SendDataToDatabase(jsonMetadata, objFilePath));
     }
 
+    // Placeholder for actual OBJ file saving logic
     private void SaveOBJFile(GameObject model, string filePath)
     {
-        // Add your OBJ exporter logic here to save the model in OBJ format
+        // You can add your own logic for exporting a model to OBJ here
         Debug.Log("OBJ file saved to: " + filePath);
-        statusMessage.text = "OBJ file saved to: " + filePath;
     }
 
+    // Send metadata to a database
     private IEnumerator SendDataToDatabase(string jsonMetadata, string objFilePath)
     {
         WWWForm form = new WWWForm();
@@ -114,26 +143,34 @@ public class SaveToDB : MonoBehaviour
             if (www.result == UnityWebRequest.Result.Success)
             {
                 Debug.Log("Data saved to database successfully: " + www.downloadHandler.text);
-                statusMessage.text = "Data saved successfully.";
             }
             else
             {
                 Debug.LogError("Failed to save data: " + www.error);
-                statusMessage.text = "Error: Failed to save data.";
             }
         }
     }
 
-    // Metadata structure using Vector3
+    // Coroutine to clear the status message after a delay
+    private IEnumerator ClearStatusMessageAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Clear the text and hide the Status Message
+        statusMessage.text = "";
+        statusMessage.gameObject.SetActive(false);  // Hide the status message UI element
+    }
+
+    // Metadata structure
     [System.Serializable]
     public class BuildingMetadata
     {
         public string obj_id { get; set; }
         public string name { get; set; }
         public string description { get; set; }
-        public Vector3 position { get; set; }  // Use Vector3 for position
-        public Vector3 rotation { get; set; }  // Use Vector3 for rotation
-        public Vector3 scale { get; set; }     // Use Vector3 for scale
+        public Vector3 position { get; set; }
+        public Vector3 rotation { get; set; }
+        public Vector3 scale { get; set; }
         public bool is_masterplan { get; set; }
     }
 }

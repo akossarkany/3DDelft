@@ -16,9 +16,9 @@ MonoBehaviour:
   SavedTimestamp: 20241002115726
   UUID: b0d298ff-ce79-4163-aa31-884a05aa5f77
   CameraRotation:
-  - 40.400062561035156
-  - 8.700101852416992
-  - 0.00006558541645063087
+  - 44.30010223388672
+  - 2.6001219749450684
+  - 0.00006889200449222699
   UseCurrentTime: 0
   functionalities:
   - Id: terrein

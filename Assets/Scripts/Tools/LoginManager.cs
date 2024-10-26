@@ -4,11 +4,10 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Text.RegularExpressions;
 
-
 public class LoginManager : MonoBehaviour
 {
     [SerializeField] private Button loginButton;
-    [SerializeField] private Button saveButton; // Initially disabled
+    [SerializeField] private Button toggleMenuButton; // Button to toggle the model specification popup
     [SerializeField] private InputField tokenInputField; // Input field for user to paste token
     [SerializeField] private Button submitTokenButton; // Button to submit the token from input field
     [SerializeField] private Text debugText; // Text element for displaying messages on the screen
@@ -19,8 +18,8 @@ public class LoginManager : MonoBehaviour
 
     private void Start()
     {
-        // Initially, show the login button and hide the save button, input field, and submit button
-        saveButton.gameObject.SetActive(false);
+        // Initially, show the login button and hide the toggle button, input field, and submit button
+        toggleMenuButton.gameObject.SetActive(false); // Hide the toggle menu button
         tokenInputField.gameObject.SetActive(false); // Hide input field initially
         submitTokenButton.gameObject.SetActive(false); // Hide submit button initially
         debugText.text = ""; // Clear the debug message initially
@@ -69,7 +68,6 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-
     // This method should be called once the user is redirected back to the Unity WebGL app after login
     public void OnLoginCallback(string token)
     {
@@ -106,7 +104,7 @@ public class LoginManager : MonoBehaviour
                     Debug.Log("Token validated successfully, switching buttons.");
                     debugText.text = "Authentication successful!"; // Show success message
                     isAuthenticated = true;
-                    SwitchToSaveButton(); // Switch to the save button after successful authentication
+                    ShowToggleMenuButton(); // Show the toggle button after successful authentication
                 }
                 else
                 {
@@ -125,13 +123,12 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    private void SwitchToSaveButton()
+    private void ShowToggleMenuButton()
     {
-        // Hide the login button and show the save button
-        Debug.Log("Switching from login button to save button.");
-        debugText.text = "You can now save."; // Show message indicating the next step
+        // Hide the login button and show the toggle menu button
+        Debug.Log("Switching from login button to toggle menu button.");
         loginButton.gameObject.SetActive(false);
-        saveButton.gameObject.SetActive(true);
+        toggleMenuButton.gameObject.SetActive(true); // Show the toggle button after authentication
     }
 
     // Custom certificate handler to bypass SSL certificate validation
