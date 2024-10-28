@@ -98,19 +98,22 @@ public class SaveToDB : MonoBehaviour
         string modelName = modelNameInput.text;
         string description = descriptionInput.text;
 
-        // Fetch actual position, rotation, and scale from the model's Transform
-        Vector3 localPosition = selectedModel.transform.localPosition;
-        Vector3 rotation = selectedModel.transform.localRotation.eulerAngles;
-        Vector3 scale = selectedModel.transform.localScale;
+        // Fetch **world space** position, rotation, and scale from the model's Transform
+        Vector3 worldPosition = selectedModel.transform.position;  // World position
+        Vector3 worldRotation = selectedModel.transform.rotation.eulerAngles;  // World rotation
+        Vector3 worldScale = selectedModel.transform.lossyScale;  // World scale (global)
+
+        Debug.Log($"Model: {selectedModel.name} | Position: {worldPosition}, Rotation: {worldRotation}, Scale: {worldScale}");
 
         // Save the model data
-        SaveModelToDirectory(selectedModel, modelName, description, localPosition, rotation, scale);
+        SaveModelToDirectory(selectedModel, modelName, description, worldPosition, worldRotation, worldScale);
 
         // Show success message
         statusMessage.text = "Model saved successfully!";
         statusMessage.gameObject.SetActive(true);  // Show the status message
         StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
     }
+
 
     // Save the model's metadata and .obj file to a directory
     private void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)

@@ -787,9 +787,9 @@ RectTransform:
   - {fileID: 890347048}
   m_Father: {fileID: 505392517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -27.99}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 230, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &460259861 stripped
@@ -815,6 +815,7 @@ GameObject:
   - component: {fileID: 505392517}
   - component: {fileID: 505392519}
   - component: {fileID: 505392518}
+  - component: {fileID: 505392520}
   m_Layer: 5
   m_Name: ModelSpecificationPopup
   m_TagString: Untagged
@@ -884,6 +885,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 505392516}
   m_CullTransparentMesh: 1
+--- !u!114 &505392520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505392516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 16
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: -4.4
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &579585750 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6675981857032744610, guid: 5fbb7c7c8ec47e849afba1b658f3e07e,
@@ -2081,9 +2108,9 @@ RectTransform:
   - {fileID: 949193941}
   m_Father: {fileID: 505392517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -163.8}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 230, y: 135.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1214482764
@@ -2118,9 +2145,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 505392517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -3.2201538, y: -250.7}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 250, y: 20.229996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1214482766
@@ -3552,9 +3579,9 @@ RectTransform:
   - {fileID: 1544770180}
   m_Father: {fileID: 505392517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -69.4}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 230, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &2040712443 stripped
@@ -3838,22 +3865,22 @@ PrefabInstance:
     - target: {fileID: 2211561115017738768, guid: a572453f97743dc49a3728d2c53a2bb2,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2211561115017738768, guid: a572453f97743dc49a3728d2c53a2bb2,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2211561115017738768, guid: a572453f97743dc49a3728d2c53a2bb2,
         type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2211561115017738768, guid: a572453f97743dc49a3728d2c53a2bb2,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2211561115017738768, guid: a572453f97743dc49a3728d2c53a2bb2,
         type: 3}
@@ -3908,7 +3935,7 @@ PrefabInstance:
     - target: {fileID: 2211561115017738768, guid: a572453f97743dc49a3728d2c53a2bb2,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -287
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2211561115017738768, guid: a572453f97743dc49a3728d2c53a2bb2,
         type: 3}
