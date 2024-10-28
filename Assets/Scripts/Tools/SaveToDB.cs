@@ -5,6 +5,8 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using Netherlands3D.DB;
+using System;
 
 public class SaveToDB : MonoBehaviour
 {
@@ -42,17 +44,25 @@ public class SaveToDB : MonoBehaviour
     }
 
     // Call this method when the user selects a model
-    public void ShowModelSpecificationPopup(GameObject model)
+public void ShowModelSpecificationPopup(GameObject model)
+{
+    if (model == null)
     {
-        selectedModel = model;
-
-        // Populate the fields with default values
-        modelNameInput.text = model.name;
-        descriptionInput.text = "Enter a description...";
-
-        // Ensure the popup is shown
-        modelSpecificationPopup.SetActive(true);
+        Debug.LogError("No model passed to ShowModelSpecificationPopup");
+        return;
     }
+
+    selectedModel = model;
+    Debug.Log($"Selected model: {selectedModel.name}");
+
+    // Populate the fields with default values
+    modelNameInput.text = model.name;
+    descriptionInput.text = "Enter a description...";
+
+    // Ensure the popup is shown
+    modelSpecificationPopup.SetActive(true);
+}
+
 
     // When the user clicks the "Save" button in the popup
     public void OnSaveButtonClick()
@@ -75,6 +85,9 @@ public class SaveToDB : MonoBehaviour
 
         SaveModelToDirectory(selectedModel, modelName, description, localPosition, rotation, scale);
 
+        // Save the OBJ file from memory (ObjectDB)
+        SaveObjFileFromMemory(modelName + ".obj");  // Use the model name as the key to retrieve the file from memory
+
         // Hide the popup after saving
         modelSpecificationPopup.SetActive(false);
         isPopupVisible = false;  // Reset popup visibility state
@@ -84,6 +97,41 @@ public class SaveToDB : MonoBehaviour
         statusMessage.gameObject.SetActive(true);  // Show the status message
         StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
     }
+
+
+
+    private void SaveObjFileFromMemory(string fileName)
+    {
+        Debug.Log($"Attempting to retrieve .obj file with key: {fileName}");  // Log the key used for retrieval
+
+        // Retrieve the file from ObjectDB
+        string base64FileData = ObjectDB.get(fileName);
+
+        if (base64FileData != null)
+        {
+            Debug.Log("Successfully retrieved the file from ObjectDB.");  // Log successful retrieval
+
+            byte[] fileBytes = Convert.FromBase64String(base64FileData);
+            string destinationPath = Path.Combine("Assets/ImportedOBJ_permanent", fileName);
+
+            // Ensure the destination directory exists
+            if (!Directory.Exists("Assets/ImportedOBJ_permanent"))
+            {
+                Directory.CreateDirectory("Assets/ImportedOBJ_permanent");
+                Debug.Log($"Created directory: Assets/ImportedOBJ_permanent");
+            }
+
+            // Save the file to the specified directory
+            File.WriteAllBytes(destinationPath, fileBytes);
+            Debug.Log($"Saved .obj file from memory to: {destinationPath}");  // Log successful save
+        }
+        else
+        {
+            Debug.LogError($"Failed to retrieve .obj file from memory for key: {fileName}");
+        }
+    }
+
+
 
     // Save the model's metadata and .obj file to a directory
     private void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
@@ -173,4 +221,31 @@ public class SaveToDB : MonoBehaviour
         public Vector3 scale { get; set; }
         public bool is_masterplan { get; set; }
     }
+
+    public void ShowModelSpecificationPopup(string objectName)
+    {
+        // Search for an object in the scene by name
+        GameObject model = GameObject.Find(objectName);
+
+        if (model != null)
+        {
+            selectedModel = model;
+            // Populate the fields with the found object's name and a default description
+            modelNameInput.text = selectedModel.name;
+            descriptionInput.text = "Enter a description...";
+
+            // Ensure the popup is shown
+            modelSpecificationPopup.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError($"No object found with the name: {objectName}");
+            statusMessage.text = $"No object found with the name: {objectName}";
+            statusMessage.gameObject.SetActive(true);
+            StartCoroutine(ClearStatusMessageAfterDelay(5)); // Hide the error message after 5 seconds
+        }
+    }
+
+
 }
+
