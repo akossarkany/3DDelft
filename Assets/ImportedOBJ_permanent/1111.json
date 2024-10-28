@@ -1,0 +1,21 @@
+﻿{
+  "obj_id": "3b7f1e52-09c8-4e30-a5bd-37234b97e024",
+  "name": "1111",
+  "description": "2222",
+  "position": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "rotation": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "scale": {
+    "x": 1.0,
+    "y": 1.0,
+    "z": 1.0
+  },
+  "is_masterplan": true
+}

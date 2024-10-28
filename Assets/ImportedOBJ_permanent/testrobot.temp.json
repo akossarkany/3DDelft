@@ -1,0 +1,21 @@
+﻿{
+  "obj_id": "1e93c4f0-6c91-444f-b96e-6ef48159cc6d",
+  "name": "testrobot.temp",
+  "description": "55555",
+  "position": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "rotation": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "scale": {
+    "x": 1.0,
+    "y": 1.0,
+    "z": 1.0
+  },
+  "is_masterplan": true
+}

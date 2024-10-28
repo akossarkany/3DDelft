@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Netherlands3D.DB;
 using System;
 using Netherlands3D.Twin;
+using System.Collections.Generic;
 
 public class SaveToDB : MonoBehaviour
 {
@@ -16,10 +17,12 @@ public class SaveToDB : MonoBehaviour
     [SerializeField] private InputField modelNameInput;
     [SerializeField] private InputField descriptionInput;
     [SerializeField] private Text statusMessage; // Text element to display messages to the user
+    [SerializeField] private Dropdown modelDropdown;  // Assign this in the Inspector
 
     [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
     [SerializeField] private string postUrl = "https://3ddelft01.bk.tudelft.nl:80/upload/object";  // URL for POST request (replace with actual URL)
 
+    private List<GameObject> selectableModels = new List<GameObject>();  // Store available models
     private bool isPopupVisible = false;  // Track the popup visibility state
     private GameObject selectedModel;
 
@@ -28,6 +31,7 @@ public class SaveToDB : MonoBehaviour
         modelSpecificationPopup.SetActive(false); // Initially hide the popup
         toggleMenuButton.gameObject.SetActive(false); // Hide toggle button until sign-in
         toggleMenuButton.onClick.AddListener(TogglePopupMenu);  // Add listener to toggle button
+        PopulateModelDropdown();  // Populate model dropdown on start
     }
 
     // This function is called after signing in
@@ -79,9 +83,6 @@ public class SaveToDB : MonoBehaviour
         }
     }
 
-
-
-
     // When the user clicks the "Save" button in the popup
     public void OnSaveButtonClick()
     {
@@ -110,42 +111,6 @@ public class SaveToDB : MonoBehaviour
         statusMessage.gameObject.SetActive(true);  // Show the status message
         StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
     }
-
-
-
-
-    private void SaveObjFileFromMemory(string fileName)
-    {
-        Debug.Log($"Attempting to retrieve .obj file with key: {fileName}");  // Log the key used for retrieval
-
-        // Retrieve the file from ObjectDB
-        string base64FileData = ObjectDB.get(fileName);
-
-        if (base64FileData != null)
-        {
-            Debug.Log("Successfully retrieved the file from ObjectDB.");  // Log successful retrieval
-
-            byte[] fileBytes = Convert.FromBase64String(base64FileData);
-            string destinationPath = Path.Combine("Assets/ImportedOBJ_permanent", fileName);
-
-            // Ensure the destination directory exists
-            if (!Directory.Exists("Assets/ImportedOBJ_permanent"))
-            {
-                Directory.CreateDirectory("Assets/ImportedOBJ_permanent");
-                Debug.Log($"Created directory: Assets/ImportedOBJ_permanent");
-            }
-
-            // Save the file to the specified directory
-            File.WriteAllBytes(destinationPath, fileBytes);
-            Debug.Log($"Saved .obj file from memory to: {destinationPath}");  // Log successful save
-        }
-        else
-        {
-            Debug.LogError($"Failed to retrieve .obj file from memory for key: {fileName}");
-        }
-    }
-
-
 
     // Save the model's metadata and .obj file to a directory
     private void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
@@ -213,43 +178,50 @@ public class SaveToDB : MonoBehaviour
         }
     }
 
-    // Coroutine to clear the status message after a delay
-    private IEnumerator ClearStatusMessageAfterDelay(float delay)
+    // Populate the dropdown with selectable objects
+    private void PopulateModelDropdown()
     {
-        yield return new WaitForSeconds(delay);
+        modelDropdown.ClearOptions();  // Clear existing options
+        selectableModels.Clear();  // Clear the current list of selectable models
 
-        // Clear the text and hide the Status Message
-        statusMessage.text = "";
-        statusMessage.gameObject.SetActive(false);  // Hide the status message UI element
-    }
+        // Find all selectable objects with a MeshRenderer component (including .temp files)
+        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+        List<string> modelNames = new List<string>();
 
-    // Metadata structure
-    [System.Serializable]
-    public class BuildingMetadata
-    {
-        public string obj_id { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
-        public Vector3 position { get; set; }
-        public Vector3 rotation { get; set; }
-        public Vector3 scale { get; set; }
-        public bool is_masterplan { get; set; }
-    }
-
-
-    private void Update()
-    {
-        // Check if the "L" key is pressed for selected object check
-        if (Input.GetKeyDown(KeyCode.L))
+        foreach (GameObject obj in allObjects)
         {
-            CheckSelectedModel();
+            if (obj.GetComponent<MeshRenderer>() != null)  // Assuming models have MeshRenderer
+            {
+                selectableModels.Add(obj);
+                modelNames.Add(obj.name);
+
+                // Check for .temp extension in the model name and handle it
+                if (obj.name.EndsWith(".temp"))
+                {
+                    string cleanedName = obj.name.Replace(".temp", ".obj");
+                    modelNames[modelNames.Count - 1] = cleanedName;  // Replace the temp extension for display
+                    Debug.Log($"Model detected and renamed: {cleanedName}");
+                }
+            }
         }
 
-        // Check if the "K" key is pressed to list all selectable objects
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            ListAllSelectableObjects();
-        }
+        // Populate the dropdown with model names
+        modelDropdown.AddOptions(modelNames);
+
+        // Add listener for dropdown selection
+        modelDropdown.onValueChanged.AddListener(delegate { SelectModelFromDropdown(); });
+    }
+
+
+    // Select a model from the dropdown
+    private void SelectModelFromDropdown()
+    {
+        int selectedIndex = modelDropdown.value;
+        selectedModel = selectableModels[selectedIndex];
+        Debug.Log($"Model selected from dropdown: {selectedModel.name}");
+
+        // Update UI input fields
+        modelNameInput.text = selectedModel.name;
     }
 
     // Function to check if a model is selected
@@ -289,10 +261,67 @@ public class SaveToDB : MonoBehaviour
         }
     }
 
+    // Raycast for model selection when clicking
+    private void SelectModelByClick()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            // Check if the clicked object has a MeshRenderer (assuming models have this component)
+            if (hit.collider != null && hit.collider.gameObject.GetComponent<MeshRenderer>() != null)
+            {
+                selectedModel = hit.collider.gameObject;  // Set the selected model
+                Debug.Log($"Model selected by click: {selectedModel.name}");
+
+                // You can also update the UI to show the selected model's name
+                modelNameInput.text = selectedModel.name;  // Update model name in UI
+            }
+        }
+    }
+
+    // Coroutine to clear the status message after a delay
+    private IEnumerator ClearStatusMessageAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Clear the text and hide the Status Message
+        statusMessage.text = "";
+        statusMessage.gameObject.SetActive(false);  // Hide the status message UI element
+    }
+
+    // Metadata structure
+    [System.Serializable]
+    public class BuildingMetadata
+    {
+        public string obj_id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+        public Vector3 position { get; set; }
+        public Vector3 rotation { get; set; }
+        public Vector3 scale { get; set; }
+        public bool is_masterplan { get; set; }
+    }
+
+    private void Update()
+    {
+        // Listen for L key to check the selected model
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            CheckSelectedModel();
+        }
+
+        // Listen for K key to list all objects
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            ListAllSelectableObjects();
+        }
+
+        // Raycast for model selection when clicking
+        if (Input.GetMouseButtonDown(0)) // Left mouse button
+        {
+            SelectModelByClick();
+        }
+    }
 }
-
-
-
-
-
-
