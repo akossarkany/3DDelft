@@ -7,6 +7,7 @@ using System.IO;
 using System;
 using UnityEngine.Events;
 using Netherlands3D.Twin.Layers;
+using Netherlands3D.Twin.Projects;
 using Netherlands3D.Coordinates;
 using Netherlands3D.DB;
 
@@ -22,6 +23,10 @@ namespace Netherlands3D.Twin
         [SerializeField] public string MetaEndpoint;
         [SerializeField] public string ObjEndpoint;
         [SerializeField] public UnityEvent<string> fileAdapter = new();
+
+
+        private FolderLayer masterplans { get; set; }
+        private FolderLayer objects { get; set; }
 
 
         public IEnumerator LoadRemoteObjects(ObjDownloader caller)
@@ -115,25 +120,43 @@ namespace Netherlands3D.Twin
                     Debug.Log("Metadata received. Processing...");
                     JsonMetaData metadata = JsonConvert.DeserializeObject<List<JsonMetaData>>(request.downloadHandler.text)[0];
 
+                    if (this.masterplans == null)
+                    {
 
-                    newLayer.name = metadata.name;
+                        this.masterplans = new FolderLayer("Masterplans");
+                        this.objects = new FolderLayer("HD Objects");
+                    }
+
+                    if (metadata != null)
+                    {
+
+                        LayerData self = ProjectData.Current.RootLayer.find(ObjectID + ".download");
 
 
-                    var truePosition = new Coordinate(
-                        CoordinateSystem.RDNAP,
-                        metadata.position.x,
-                        metadata.position.y,
-                        metadata.position.z
-                     );
-                    var pos = CoordinateConverter.ConvertTo(truePosition, CoordinateSystem.Unity);
-                    Vector3 v = new Vector3(
-                        (float)pos.Points[0],
-                        (float)pos.Points[1],
-                        (float)pos.Points[2]
-                    );
-                    newLayer.transform.position = v;
-                    newLayer.transform.rotation = Quaternion.Euler(metadata.rotation);
-                    newLayer.transform.localScale = metadata.scale;
+                        self.SetParent(metadata.is_masterplan ? this.masterplans : this.objects);
+                        self.Name = metadata.name;
+
+
+                        var truePosition = new Coordinate(
+                            CoordinateSystem.RDNAP,
+                            metadata.position.x,
+                            metadata.position.y,
+                            metadata.position.z
+                         );
+                        var pos = CoordinateConverter.ConvertTo(truePosition, CoordinateSystem.Unity);
+                        Vector3 v = new Vector3(
+                            (float)pos.Points[0],
+                            (float)pos.Points[1],
+                            (float)pos.Points[2]
+                        );
+                        newLayer.transform.position = v;
+                        newLayer.transform.rotation = Quaternion.Euler(metadata.rotation);
+                        newLayer.transform.localScale = metadata.scale;
+                    }
+                    else
+                    {
+                        Debug.LogError("Metadata was null. Aborting");
+                    }
             
                 }
                 else

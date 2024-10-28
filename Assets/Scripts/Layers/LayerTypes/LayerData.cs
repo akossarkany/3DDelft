@@ -241,5 +241,27 @@ namespace Netherlands3D.Twin.Layers
 
             return assetsOfCurrentLayer.Concat(assetsOfAllChildLayers);
         }
+
+
+        public LayerData find(string name)
+        {
+            if ((name != null) && (name == this.name))
+            {
+                Debug.Log("Layer data with name " + name + " found.");
+                return this;
+            }
+            if (this.children != null)
+            {
+                foreach (var child in this.children)
+                {
+                    if (child.find(name) is LayerData res)
+                    {
+                        return res;
+                    }
+                }
+            }
+            return null;
+        }
+
     }
 }

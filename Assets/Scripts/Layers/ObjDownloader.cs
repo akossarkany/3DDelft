@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Newtonsoft.Json;
 using Netherlands3D.Twin.Layers;
+using Netherlands3D.Twin.Projects;
 
 namespace Netherlands3D.Twin
 {
@@ -16,17 +17,6 @@ namespace Netherlands3D.Twin
         void Start()
         {
             StartCoroutine(remoteAdapter.LoadRemoteObjects(this));
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
-
-        private void OnEnable()
-        {
-            
         }
 
         public void LoadMetaInformation(string ObjectID, GameObject newLayer)
