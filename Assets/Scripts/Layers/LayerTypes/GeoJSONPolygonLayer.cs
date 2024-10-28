@@ -18,7 +18,7 @@ namespace Netherlands3D.Twin.Layers
     {
         public List<FeaturePolygonVisualisations> SpawnedVisualisations = new();
 
-        private bool randomizeColorPerFeature = false;
+        private bool randomizeColorPerFeature = true;
         public bool RandomizeColorPerFeature { get => randomizeColorPerFeature; set => randomizeColorPerFeature = value; }
 
         [SerializeField] private Material polygonVisualizationMaterial;
