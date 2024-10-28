@@ -70,7 +70,7 @@ namespace Netherlands3D.Twin.Layers
         {
             if (!ChildrenLayers.Contains(layer))
             {
-                ChildrenLayers.Add(layer);
+                ChildrenLayers.Insert(0, layer);
                 ChildrenChanged.Invoke();
             }
         }
