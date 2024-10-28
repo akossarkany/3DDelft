@@ -7,6 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Netherlands3D.DB;
 using System;
+using Netherlands3D.Twin;
 
 public class SaveToDB : MonoBehaviour
 {
@@ -44,24 +45,41 @@ public class SaveToDB : MonoBehaviour
     }
 
     // Call this method when the user selects a model
-public void ShowModelSpecificationPopup(GameObject model)
-{
-    if (model == null)
+    public void ShowModelSpecificationPopup(GameObject model)
     {
-        Debug.LogError("No model passed to ShowModelSpecificationPopup");
-        return;
+        if (model != null)
+        {
+            selectedModel = model;
+            Debug.Log($"Model selected: {selectedModel.name}");
+
+            // Set the transformation target using TransformHandleInterfaceToggle (if needed)
+            var transformHandle = selectedModel.GetComponent<TransformHandleInterfaceToggle>();
+            if (transformHandle != null)
+            {
+                transformHandle.SetTransformTarget(selectedModel);
+            }
+            else
+            {
+                Debug.LogWarning("TransformHandleInterfaceToggle component not found on the selected model.");
+            }
+
+            // Populate the fields with default values
+            modelNameInput.text = selectedModel.name;
+            descriptionInput.text = "Enter a description...";
+
+            // Show the popup
+            modelSpecificationPopup.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("No model found with the given name.");
+            statusMessage.text = "No model selected.";
+            statusMessage.gameObject.SetActive(true);
+            StartCoroutine(ClearStatusMessageAfterDelay(5)); // Hide the error message after 5 seconds
+        }
     }
 
-    selectedModel = model;
-    Debug.Log($"Selected model: {selectedModel.name}");
 
-    // Populate the fields with default values
-    modelNameInput.text = model.name;
-    descriptionInput.text = "Enter a description...";
-
-    // Ensure the popup is shown
-    modelSpecificationPopup.SetActive(true);
-}
 
 
     // When the user clicks the "Save" button in the popup
@@ -69,6 +87,7 @@ public void ShowModelSpecificationPopup(GameObject model)
     {
         if (selectedModel == null)
         {
+            Debug.LogError("No model selected when trying to save.");
             statusMessage.text = "No model selected.";
             statusMessage.gameObject.SetActive(true);  // Show the status message
             StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
@@ -83,20 +102,15 @@ public void ShowModelSpecificationPopup(GameObject model)
         Vector3 rotation = selectedModel.transform.localRotation.eulerAngles;
         Vector3 scale = selectedModel.transform.localScale;
 
+        // Save the model data
         SaveModelToDirectory(selectedModel, modelName, description, localPosition, rotation, scale);
-
-        // Save the OBJ file from memory (ObjectDB)
-        SaveObjFileFromMemory(modelName + ".obj");  // Use the model name as the key to retrieve the file from memory
-
-        // Hide the popup after saving
-        modelSpecificationPopup.SetActive(false);
-        isPopupVisible = false;  // Reset popup visibility state
 
         // Show success message
         statusMessage.text = "Model saved successfully!";
         statusMessage.gameObject.SetActive(true);  // Show the status message
         StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
     }
+
 
 
 
@@ -222,30 +236,63 @@ public void ShowModelSpecificationPopup(GameObject model)
         public bool is_masterplan { get; set; }
     }
 
-    public void ShowModelSpecificationPopup(string objectName)
+
+    private void Update()
     {
-        // Search for an object in the scene by name
-        GameObject model = GameObject.Find(objectName);
-
-        if (model != null)
+        // Check if the "L" key is pressed for selected object check
+        if (Input.GetKeyDown(KeyCode.L))
         {
-            selectedModel = model;
-            // Populate the fields with the found object's name and a default description
-            modelNameInput.text = selectedModel.name;
-            descriptionInput.text = "Enter a description...";
-
-            // Ensure the popup is shown
-            modelSpecificationPopup.SetActive(true);
+            CheckSelectedModel();
         }
-        else
+
+        // Check if the "K" key is pressed to list all selectable objects
+        if (Input.GetKeyDown(KeyCode.K))
         {
-            Debug.LogError($"No object found with the name: {objectName}");
-            statusMessage.text = $"No object found with the name: {objectName}";
-            statusMessage.gameObject.SetActive(true);
-            StartCoroutine(ClearStatusMessageAfterDelay(5)); // Hide the error message after 5 seconds
+            ListAllSelectableObjects();
         }
     }
 
+    // Function to check if a model is selected
+    private void CheckSelectedModel()
+    {
+        if (selectedModel != null)
+        {
+            Debug.Log($"Selected model: {selectedModel.name}");
+        }
+        else
+        {
+            Debug.LogError("No model is currently selected.");
+        }
+    }
+
+    // Function to list all possible objects for selection
+    private void ListAllSelectableObjects()
+    {
+        // Find all objects with a MeshRenderer component (or use your specific filter)
+        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+
+        Debug.Log("Listing all selectable objects:");
+
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.GetComponent<MeshRenderer>() != null)  // Assuming you want models with MeshRenderer
+            {
+                Debug.Log($"Selectable Object: {obj.name}");
+
+                // For now, select the first object found (for testing)
+                if (selectedModel == null)
+                {
+                    selectedModel = obj;
+                    Debug.Log($"Automatically selected model: {selectedModel.name}");
+                }
+            }
+        }
+    }
 
 }
+
+
+
+
+
 
