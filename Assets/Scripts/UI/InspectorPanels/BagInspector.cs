@@ -111,20 +111,26 @@ namespace Netherlands3D.Twin.Interface.BAG
 			}
 		}
 
-		private void ColorBuildingById(string bagId, Color color)
-		{
-			var objectIdAndColor = new Dictionary<string, Color>
+        private void ColorBuildingById(string bagId, Color color)
+        {
+            if (bagId == TargetBuildingId)
+            {
+                color = new Color(1, 1, 1, 0); 
+            }
+
+            var objectIdAndColor = new Dictionary<string, Color>
 			{
 				{ bagId, color },
 			};
 
-			ColorSetLayer = GeometryColorizer.InsertCustomColorSet(-1, objectIdAndColor);
-		}
+            ColorSetLayer = GeometryColorizer.InsertCustomColorSet(-1, objectIdAndColor);
+        }
 
-		/// <summary>
-		/// Find objectmapping by raycast and get the BAG ID
-		/// </summary>
-		private void FindObjectMapping()
+
+        /// <summary>
+        /// Find objectmapping by raycast and get the BAG ID
+        /// </summary>
+        private void FindObjectMapping()
 		{
 			// Raycast from pointer position using main camera
 			var position = Pointer.current.position.ReadValue();
