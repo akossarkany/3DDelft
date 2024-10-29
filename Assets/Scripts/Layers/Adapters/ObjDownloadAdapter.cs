@@ -133,7 +133,7 @@ namespace Netherlands3D.Twin
                         LayerData self = ProjectData.Current.RootLayer.find(ObjectID + ".download");
 
 
-                        self.SetParent(metadata.is_masterplan ? this.masterplans : this.objects);
+                        self.SetParent(metadata.is_master ? this.masterplans : this.objects);
                         self.Name = metadata.name;
 
 
@@ -181,7 +181,7 @@ namespace Netherlands3D.Twin
             public Vector3 position;
             public Vector3 rotation;
             public Vector3 scale;
-            public bool is_masterplan;
+            public bool is_master;
             
         }
 
