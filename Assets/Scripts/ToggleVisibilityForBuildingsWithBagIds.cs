@@ -14,11 +14,11 @@ namespace Netherlands3D.Twin
         private Dictionary<string, Color> buildingColors = new Dictionary<string, Color>();
         private List<string> bagIds = new List<string>()
         {
-            "0503100000000209",
-            "0503100000028802",
-            "0503100000014169",
-            "0503100000014272",
-            "0503100000022523"
+            "0503100000000209", // Nieuwe Kerk
+            "0503100000014169", // Stadhuis
+            "0503100000022523", // Oude Kerk
+            "0503100000032799", // TU Delft Library
+
         };
 
         private void Start()
