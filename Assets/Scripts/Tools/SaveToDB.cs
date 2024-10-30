@@ -9,6 +9,13 @@ using Netherlands3D.DB;
 using System;
 using Netherlands3D.Twin;
 using System.Collections.Generic;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using Netherlands3D.Twin.Projects;
+using System.Linq;
+using Netherlands3D.Twin.Layers;
+using Netherlands3D.Coordinates;
+using System.Security.Cryptography;
 
 public class SaveToDB : MonoBehaviour
 {
@@ -22,10 +29,16 @@ public class SaveToDB : MonoBehaviour
 
     [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
     [SerializeField] private string postUrl = "https://3ddelft01.bk.tudelft.nl:80/upload/object";  // URL for POST request (replace with actual URL)
+    [SerializeField] private string existUrl = "https://3ddelft01.bk.tudelft.nl:80/exists/object/";
 
     private List<GameObject> selectableModels = new List<GameObject>();  // Store available models
     private bool isPopupVisible = false;  // Track the popup visibility state
     private GameObject selectedModel;
+    private static LayerData selectedlayer;
+
+
+    //private string jsonMetadata;
+    private string objFilePath;
 
     private void Start()
     {
@@ -97,19 +110,19 @@ public class SaveToDB : MonoBehaviour
             return;
         }
 
-        string modelName = modelNameInput.text;
+        //string modelName = modelNameInput.text;
         string description = descriptionInput.text;
 
-        // Fetch **world space** position, rotation, and scale from the model's Transform
-        Vector3 worldPosition = selectedModel.transform.position;  // World position
-        Vector3 worldRotation = selectedModel.transform.rotation.eulerAngles;  // World rotation
-        Vector3 worldScale = selectedModel.transform.lossyScale;  // World scale (global)
+        //// Fetch **world space** position, rotation, and scale from the model's Transform
+        //Vector3 worldPosition = selectedModel.transform.position;  // World position
+        //Vector3 worldRotation = selectedModel.transform.rotation.eulerAngles;  // World rotation
+        //Vector3 worldScale = selectedModel.transform.lossyScale;  // World scale (global)
 
-        Debug.Log($"Model: {selectedModel.name} | Position: {worldPosition}, Rotation: {worldRotation}, Scale: {worldScale}");
+        //Debug.Log($"Model: {selectedModel.name} | Position: {worldPosition}, Rotation: {worldRotation}, Scale: {worldScale}");
 
         // Save the model data
-        SaveModelToDirectory(selectedModel, modelName, description, worldPosition, worldRotation, worldScale);
-
+        //SaveModelToDirectory(selectedModel, description);
+        StartCoroutine(SendFileDataToDatabase(uploadMeta));
         // Show success message
         statusMessage.text = "Model saved successfully!";
         statusMessage.gameObject.SetActive(true);  // Show the status message
@@ -156,56 +169,85 @@ public class SaveToDB : MonoBehaviour
     // Raycast for model selection when clicking
     private void SelectModelByClick()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit))
+        var selectedLayers = ProjectData.Current.RootLayer.SelectedLayers.ToList();
+        if (selectedLayers.Count() > 1)
         {
-            // Check if the clicked object has a MeshRenderer (assuming models have this component)
-            if (hit.collider != null && hit.collider.gameObject.GetComponent<MeshRenderer>() != null)
-            {
-                selectedModel = hit.collider.gameObject;  // Set the selected model
-                Debug.Log($"Model selected by click: {selectedModel.name}");
-
-                // You can also update the UI to show the selected model's name
-                modelNameInput.text = selectedModel.name;  // Update model name in UI
-            }
+            Debug.LogError("Only one layer should be selected");
+            return;
         }
+
+        selectedlayer = selectedLayers.First();
+        modelNameInput.text = selectedlayer.Name;
+        selectedModel = GameObject.Find(selectedlayer.Name);
+        if (selectedModel != null)
+        { 
+            Debug.Log($"Found {selectedModel.name}");
+        }
+        else
+        {
+            Debug.LogError($"No Game Object is named {selectedlayer.Name}");
+        }
+        //Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
+        //RaycastHit hit;
+
+        //if (Physics.Raycast(ray, out hit, 100000f))
+        //{
+        //    // Check if the clicked object has a MeshRenderer (assuming models have this component)
+        //    if (true || hit.collider != null && hit.collider.gameObject.GetComponent<MeshRenderer>() != null)
+        //    {
+        //        selectedModel = hit.collider.gameObject;  // Set the selected model
+        //        Debug.Log($"Model selected by click: {selectedModel.name}");
+
+        //        // You can also update the UI to show the selected model's name
+        //        modelNameInput.text = selectedModel.name;  // Update model name in UI
+        //    }
+        //}
+    }
+
+    private void SelectModelFromLayerUI()
+    {
+        var selectedLayers = ProjectData.Current.RootLayer.SelectedLayers.ToList();
+        if (selectedLayers.Count() > 1)
+        {
+            Debug.LogError("Only one layer should be selected");
+            return;
+        }
+
+        selectedlayer = selectedLayers.First();
+        modelNameInput.text = selectedlayer.Name;
+        selectedModel = GameObject.Find(selectedlayer.Name);
+    }
+
+    private Vector3 ConvertToRDNAP(Vector3 vec)
+    {
+        var truePosition = new Coordinate(CoordinateSystem.RDNAP, vec.x, vec.y, vec.z);
+        var pos = CoordinateConverter.ConvertTo(truePosition, CoordinateSystem.Unity);
+        return new Vector3((float)pos.Points[0], (float)pos.Points[1], (float)pos.Points[2]);
     }
 
 
     // Save the model's metadata and .obj file to a directory
-    private void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
+    private void SaveModelToDirectory(GameObject model, string description)
     {
+        Debug.Log("Model Type: " + model.name);
         // Ensure the directory exists
         if (!Directory.Exists(saveDirectory))
         {
             Directory.CreateDirectory(saveDirectory);
         }
 
-        string objFilePath = Path.Combine(saveDirectory, modelName) + ".obj";
-        string jsonFilePath = Path.Combine(saveDirectory, modelName + ".json");
+        objFilePath = Path.Combine(saveDirectory, model.name + ".obj");
 
         // 1. Save the OBJ file (This part requires an OBJ exporter, replace this with actual OBJ saving logic)
         SaveOBJFile(model, objFilePath);
 
         // 2. Create a metadata object and serialize to JSON
-        var metadata = new BuildingMetadata
-        {
-            obj_id = System.Guid.NewGuid().ToString(),  // Generate a unique ID
-            name = modelName,
-            description = description,
-            position = new Vector3(localPosition.x, localPosition.y, localPosition.z),
-            rotation = new Vector3(rotation.x, rotation.y, rotation.z),
-            scale = new Vector3(scale.x, scale.y, scale.z),
-            is_masterplan = masterplanToggle.isOn // Save the toggle state
-        };
 
-        string jsonMetadata = JsonConvert.SerializeObject(metadata, Formatting.Indented);
-        File.WriteAllText(jsonFilePath, jsonMetadata, Encoding.UTF8);
+        //File.WriteAllText(jsonFilePath, jsonMetadata, Encoding.UTF8);
 
         // 3. Optionally, send metadata to a database
-        StartCoroutine(SendDataToDatabase(jsonMetadata, objFilePath));
+        StartCoroutine(SendFileDataToDatabase(uploadMeta));
     }
 
     // Placeholder for actual OBJ file saving logic
@@ -215,8 +257,12 @@ public class SaveToDB : MonoBehaviour
         Debug.Log("OBJ file saved to: " + filePath);
     }
 
-    // Send metadata to a database
-    private IEnumerator SendDataToDatabase(string jsonMetadata, string objFilePath)
+    private void uploadMeta(string ObjId)
+    {
+        StartCoroutine(SendMetaDataToDatabase(ObjId));
+    }
+
+    private IEnumerator SendMetaDataToDatabase(string ObjId)
     {
         if (LoginManager.token is not string)
         {
@@ -224,22 +270,89 @@ public class SaveToDB : MonoBehaviour
             yield break;
         }
 
-        WWWForm form = new WWWForm();
-        form.AddField("metadata", jsonMetadata);
+        //WWWForm form = new WWWForm();
+        //form.AddField("metadata", jsonMetadata);
+        var metadata = new BuildingMetadata
+        {
+            obj_id = ObjId,  // Generate a unique ID
+            name = selectedModel.name,
+            description = descriptionInput.text,
+            position = ConvertToRDNAP(selectedModel.transform.position),
+            rotation = selectedModel.transform.rotation.eulerAngles,
+            scale = selectedModel.transform.localScale,
+            is_masterplan = masterplanToggle.isOn // Save the toggle state
+        };
 
         // Add the OBJ file to the form
-        byte[] objFileData = File.ReadAllBytes(objFilePath + ".json");
-        form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "text/plain");
+        byte[] objFileMetadata = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(metadata, Formatting.Indented));
+        //form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "text/plain");
 
-        using (UnityWebRequest www = UnityWebRequest.Post(postUrl, form))
+        using (UnityWebRequest www = new UnityWebRequest(postUrl, "POST"))
         {
+            www.uploadHandler = new UploadHandlerRaw(objFileMetadata);
             www.SetRequestHeader("Authorization", $"Bearer {LoginManager.token}");
+            www.SetRequestHeader("Content-Type", "application/json");
             www.certificateHandler = new BypassCertificateHandler();
             yield return www.SendWebRequest();
 
             if (www.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("Data saved to database successfully: " + www.downloadHandler.text);
+                Debug.Log("Metadata saved to database successfully.");
+            }
+            else
+            {
+                Debug.LogError("Failed to save metadata: " + www.error);
+            }
+        }
+    }
+
+    // Send metadata to a database
+    private IEnumerator SendFileDataToDatabase(Action<string> onObjUploaded)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(existUrl + selectedlayer.Id))
+        { 
+            request.certificateHandler = new BypassCertificateHandler();
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                onObjUploaded.Invoke(selectedlayer.Id);
+                yield break;
+            }
+
+        }
+        if (LoginManager.token is not string)
+        {
+            Debug.LogError("No authentication token.");
+            yield break;
+        }
+        //objFilePath = Path.Combine(Application.persistentDataPath, selectedModel.name + ".temp");
+        //if (!File.Exists(objFilePath))
+        //{
+        //    Debug.LogError("File does not exist: " + objFilePath);
+        //    yield break;
+        //}
+
+        //WWWForm form = new WWWForm();
+        //form.AddField("metadata", jsonMetadata);
+
+        // Add the OBJ file to the form
+        //byte[] objFileData = File.ReadAllBytes(objFilePath);
+        //form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "text/plain");
+
+        using (UnityWebRequest www = new UnityWebRequest(postUrl, "POST"))
+        {
+            www.uploadHandler = new UploadHandlerRaw(ObjectDB.get(selectedModel.name));
+            www.downloadHandler = new DownloadHandlerBuffer();
+            www.SetRequestHeader("Authorization", $"Bearer {LoginManager.token}");
+            www.SetRequestHeader("Content-Type", "text/plain");
+            www.certificateHandler = new BypassCertificateHandler();
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Data saved to database successfully.");
+                onObjUploaded.Invoke(www.downloadHandler.text);
             }
             else
             {

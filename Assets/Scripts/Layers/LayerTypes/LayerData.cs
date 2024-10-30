@@ -26,6 +26,15 @@ namespace Netherlands3D.Twin.Layers
         [JsonIgnore] public List<LayerData> ChildrenLayers => children;
         [JsonIgnore] public bool IsSelected => Root.SelectedLayers.Contains(this);
 
+        public string Id
+        {
+            get => UUID.ToString();
+            set
+            {
+                Guid.TryParse(value, out UUID);
+            }
+        }
+
         [JsonIgnore]
         public string Name
         {
@@ -46,7 +55,7 @@ namespace Netherlands3D.Twin.Layers
                 activeSelf = value;
                 foreach (var child in ChildrenLayers)
                 {
-                    child.ActiveSelf = child.ActiveSelf; //set the values again to recursively call the events.
+                    child.ActiveSelf = activeSelf ? child.ActiveSelf : activeSelf; //set the values again to recursively call the events.
                 }
 
                 LayerActiveInHierarchyChanged.Invoke(ActiveInHierarchy);

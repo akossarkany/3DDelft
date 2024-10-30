@@ -22,6 +22,7 @@ namespace Netherlands3D.Twin
         [SerializeField] public string QueryEndpoint;
         [SerializeField] public string MetaEndpoint;
         [SerializeField] public string ObjEndpoint;
+        public bool isLoaded = false;
         [SerializeField] public UnityEvent<string> fileAdapter = new();
 
 
@@ -55,7 +56,10 @@ namespace Netherlands3D.Twin
                         if (jsonObj != null)
                         {
                             Debug.Log("Requesting object: " + jsonObj.obj_id);
-                            caller.StartCoroutine(DownloadObjFile(jsonObj.obj_id));
+                            if (!ObjectDB.contains(jsonObj.obj_id))
+                            {
+                                caller.StartCoroutine(DownloadObjFile(jsonObj.obj_id));
+                            }
                         }
                         else
                         {
@@ -64,7 +68,7 @@ namespace Netherlands3D.Twin
 
                         
                     }
-
+                    isLoaded = true;
                 }
                 else
                 {
@@ -132,7 +136,7 @@ namespace Netherlands3D.Twin
 
                         LayerData self = ProjectData.Current.RootLayer.find(ObjectID + ".download");
 
-
+                        self.Id = metadata.obj_id;
                         self.SetParent(metadata.is_master ? this.masterplans : this.objects);
                         self.Name = metadata.name;
 
@@ -149,9 +153,11 @@ namespace Netherlands3D.Twin
                             (float)pos.Points[1],
                             (float)pos.Points[2]
                         );
-                        newLayer.transform.position = v;
-                        newLayer.transform.rotation = Quaternion.Euler(metadata.rotation);
-                        newLayer.transform.localScale = metadata.scale;
+                        newLayer.name = ObjectID + ".download";
+                        newLayer.transform.parent.gameObject.name = metadata.name;
+                        newLayer.transform.parent.position = v;
+                        newLayer.transform.parent.rotation = Quaternion.Euler(metadata.rotation);
+                        newLayer.transform.parent.localScale = metadata.scale;
                     }
                     else
                     {

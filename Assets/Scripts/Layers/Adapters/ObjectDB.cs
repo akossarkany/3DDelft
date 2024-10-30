@@ -11,22 +11,30 @@ namespace Netherlands3D.DB
     {
         private static Dictionary<string, byte[]> DB = new Dictionary<string, byte[]>();
 
+        public static bool contains(string key)
+        {
+            return DB.ContainsKey(key);
+        }
+
         public static void insert(string key, string value)
         {
             key = clearKey(key);
-            DB.Add(key, Encoding.UTF8.GetBytes(value));
+            if (!DB.ContainsKey(key))
+            {
+                DB.Add(key, Encoding.UTF8.GetBytes(value));
+            }
         }
 
-        public static string get(string key)
+        public static byte[] get(string key)
         {
             key = clearKey(key);
             if (DB.ContainsKey(key))
             {
-                return DB[key].ToString();
+                return DB[key];
             }
             else
             {
-                Debug.LogError("Key not found in the in-memory database");
+                Debug.LogError($"Key '{key}' not found in the in-memory database");
                 return null;
             }
         }
