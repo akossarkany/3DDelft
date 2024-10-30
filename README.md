@@ -40,15 +40,15 @@ It allows users to access and retrieve geospatial vector data (e.g., buildings, 
 
 #### How to import a WFS layer into 3D Netherlands
 1. Go to [Netherlands 3D](https://netherlands3d.eu/twin/) and located at the Area of Interest(Delft).
-![LoadWFSLayer1](image_url)
+<img width="1098" alt="LoadWFSLayer1" src="https://github.com/user-attachments/assets/df6cf278-0fb7-4e98-a18e-00635cb1cb01">
 
 2. Open lagen, click the plus on the right downside, click importeren and Bestand via URL.
-![LoadWFSLayer2](image_url)
+<img width="1100" alt="LoadWFSLayer2" src="https://github.com/user-attachments/assets/f58e5ddd-f372-45f3-88a4-fe0a49cb220d">
 
 3. Open [Delft Open Data Portal](https://data.delft.nl/search), copy and load GeoJSON links for the layers you want.
 
 4. Save the .nl3d file by clicking the down-pointing arrow and the bestand opslaan.
-![LoadWFSLayer4](image_url)
+<img width="877" alt="LoadWFSLayer4" src="https://github.com/user-attachments/assets/1c41a9ff-998d-44ee-b726-6a824b18f354">
 
 #### Customizing WFS layers in Unity
 <img width="1259" alt="image" src="https://github.com/user-attachments/assets/773c9f58-512c-4448-9e7d-906865e0402c">
