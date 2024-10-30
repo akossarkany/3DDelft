@@ -33,10 +33,14 @@ this drawback.
 ## Loading new layers
 ### WFS
 #### What is WFS?
-WFS (Web Feature Service) is a powerful web-based protocol designed for accessing and manipulating geographic features over the internet. Unlike WMS which only provides map images, WFS delivers actual geographic data with geometry and attributes, typically in formats like GML or GeoJSON, allowing for comprehensive data analysis and manipulation. The service supports essential operations, enabling users to not only retrieve but also edit geographic features. This makes WFS particularly valuable for various applications such as downloading geographic data for local analysis, remote feature editing, GIS integration, and creating interactive mapping applications.
+WFS (Web Feature Service) is a powerful web-based protocol designed for accessing and manipulating geographic features over the internet. Unlike WMS which only provides map images, WFS delivers actual geographic data with geometry and attributes, typically in formats like GML or GeoJSON. The service supports essential operations, enabling users to not only retrieve but also edit geographic features. This makes WFS valuable for applications such as downloading geographic data for local analysis, remote feature editing, and creating interactive mapping applications.
 
 #### The 3D Netherlands WFS functionality
+It allows users to access and retrieve geospatial vector data (e.g., buildings, terrain) in real time from the 3D Netherlands platform. By using WFS, users can query and download specific datasets, such as building footprints or terrain models, as vector features rather than static images. This functionality enables interactive integration of updated geospatial data into applications like Unity for 3D visualization, analysis, or rendering within custom projects like the 3D Delft basemap.
+
 #### How to import a WFS layer into 3D Netherlands
+<img width="1098" alt="LoadWFSLayer1" src="https://github.com/user-attachments/assets/99f8bbb0-a7c8-4cc5-9b81-b64d8882b662">
+1. Go to [Netherlands 3D]([URL](https://netherlands3d.eu/twin/)) and located at the Area of Interest(Delft)
 
 
 
