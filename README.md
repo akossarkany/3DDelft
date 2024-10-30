@@ -40,7 +40,7 @@ It allows users to access and retrieve geospatial vector data (e.g., buildings, 
 
 #### How to import a WFS layer into 3D Netherlands
 <img width="1098" alt="LoadWFSLayer1" src="https://github.com/user-attachments/assets/99f8bbb0-a7c8-4cc5-9b81-b64d8882b662">
-1. Go to [Netherlands 3D]([URL](https://netherlands3d.eu/twin/)) and located at the Area of Interest(Delft)
+1. Go to [Netherlands 3D](https://netherlands3d.eu/twin/) and located at the Area of Interest(Delft)
 
 
 
