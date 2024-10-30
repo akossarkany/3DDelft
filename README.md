@@ -40,9 +40,22 @@ It allows users to access and retrieve geospatial vector data (e.g., buildings, 
 
 #### How to import a WFS layer into 3D Netherlands
 <img width="1098" alt="LoadWFSLayer1" src="https://github.com/user-attachments/assets/99f8bbb0-a7c8-4cc5-9b81-b64d8882b662">
-1. Go to [Netherlands 3D](https://netherlands3d.eu/twin/) and located at the Area of Interest(Delft)
+1. Go to [Netherlands 3D](https://netherlands3d.eu/twin/) and located at the Area of Interest(Delft).
+<img width="1100" alt="LoadWFSLayer2" src="https://github.com/user-attachments/assets/daa67c00-23df-4a6a-8db8-061ddd8f89b7">
+2. Open lagen, click the plus on the right downside, click importeren and Bestand via URL.
+3. Open [Delft Open Data Portal](https://data.delft.nl/search), copy and load GeoJSON links for the layers you want.
+<img width="877" alt="LoadWFSLayer4" src="https://github.com/user-attachments/assets/9be96ab7-79cd-4cdb-ac3c-f69e5ad3aa1e">
+4. Save the .nl3d file by clicking the down-pointing arrow and the bestand opslaan.
 
+#### Customizing WFS layers in Unity
+<img width="1259" alt="image" src="https://github.com/user-attachments/assets/773c9f58-512c-4448-9e7d-906865e0402c">
+1. As the project is initialized by the previous steps, you can open "Main Delft" and Click "ProjectDataHandler", and change the Default Project File to the.nl3d file which you saved from the last step.
+2. Click the ConfigLoader and enter Play Mode to check if the WFS layers are loaded.
+3. Go to File > Building Settings, build and run the project again.
 
+### WMS
+#### What is WMS?
+WMS (Web Map Service) is a standardized protocol that serves georeferenced map images over the Internet, providing pre-rendered maps in formats like PNG or JPEG. Unlike WFS which returns raw data, WMS focuses on visualization by delivering ready-to-display map images. This makes it ideal for base maps, background layers, and quick visualization.
 
 ## Making and loading 3D tiles
 ## Loading and storing OBJ
