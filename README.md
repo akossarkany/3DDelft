@@ -46,7 +46,6 @@ It allows users to access and retrieve geospatial vector data (e.g., buildings, 
 2. Open lagen, click the plus on the right downside, click importeren and Bestand via URL.
 
 3. Open [Delft Open Data Portal](https://data.delft.nl/search), copy and load GeoJSON links for the layers you want.
-
 <img width="877" alt="LoadWFSLayer4" src="https://github.com/user-attachments/assets/9be96ab7-79cd-4cdb-ac3c-f69e5ad3aa1e">
 
 4. Save the .nl3d file by clicking the down-pointing arrow and the bestand opslaan.
