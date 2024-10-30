@@ -33,7 +33,7 @@ this drawback.
 ## Loading new layers
 ### WFS
 #### What is WFS?
-
+WFS (Web Feature Service) is a powerful web-based protocol designed for accessing and manipulating geographic features over the internet. Unlike WMS which only provides map images, WFS delivers actual geographic data with geometry and attributes, typically in formats like GML or GeoJSON, allowing for comprehensive data analysis and manipulation. The service supports essential operations, enabling users to not only retrieve but also edit geographic features. This makes WFS particularly valuable for various applications such as downloading geographic data for local analysis, remote feature editing, GIS integration, and creating interactive mapping applications.
 
 #### The 3D Netherlands WFS functionality
 #### How to import a WFS layer into 3D Netherlands
