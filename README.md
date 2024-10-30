@@ -29,15 +29,17 @@ this drawback.
 ## Introduction
 ## Getting Started
 ## Configuring the new municipality
+
 ## Loading new layers
-
 ### WFS
-1. What is WFS?
-2. The 3D Netherlands WFS functionality
-3. How to import a WFS layer into 3D Netherlands
+#### What is WFS?
+
+
+#### The 3D Netherlands WFS functionality
+#### How to import a WFS layer into 3D Netherlands
 
 
 
-## 5. Making and loading 3D tiles
-## 6. Loading and storing OBJ
-## 7. Future
+## Making and loading 3D tiles
+## Loading and storing OBJ
+## Future
