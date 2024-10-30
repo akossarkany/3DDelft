@@ -39,16 +39,16 @@ WFS (Web Feature Service) is a powerful web-based protocol designed for accessin
 It allows users to access and retrieve geospatial vector data (e.g., buildings, terrain) in real time from the 3D Netherlands platform. By using WFS, users can query and download specific datasets, such as building footprints or terrain models, as vector features rather than static images. This functionality enables interactive integration of updated geospatial data into applications like Unity for 3D visualization, analysis, or rendering within custom projects like the 3D Delft basemap.
 
 #### How to import a WFS layer into 3D Netherlands
-<img width="1098" alt="LoadWFSLayer1" src="https://github.com/user-attachments/assets/99f8bbb0-a7c8-4cc5-9b81-b64d8882b662">
 1. Go to [Netherlands 3D](https://netherlands3d.eu/twin/) and located at the Area of Interest(Delft).
+![LoadWFSLayer1](image_url)
 
-<img width="1100" alt="LoadWFSLayer2" src="https://github.com/user-attachments/assets/daa67c00-23df-4a6a-8db8-061ddd8f89b7">
 2. Open lagen, click the plus on the right downside, click importeren and Bestand via URL.
+![LoadWFSLayer2](image_url)
 
 3. Open [Delft Open Data Portal](https://data.delft.nl/search), copy and load GeoJSON links for the layers you want.
-<img width="877" alt="LoadWFSLayer4" src="https://github.com/user-attachments/assets/9be96ab7-79cd-4cdb-ac3c-f69e5ad3aa1e">
 
 4. Save the .nl3d file by clicking the down-pointing arrow and the bestand opslaan.
+![LoadWFSLayer4](image_url)
 
 #### Customizing WFS layers in Unity
 <img width="1259" alt="image" src="https://github.com/user-attachments/assets/773c9f58-512c-4448-9e7d-906865e0402c">
