@@ -9,7 +9,6 @@ using Netherlands3D.DB;
 using System;
 using Netherlands3D.Twin;
 using System.Collections.Generic;
-using Netherlands3D.Coordinates;
 
 public class SaveToDB : MonoBehaviour
 {
@@ -17,8 +16,9 @@ public class SaveToDB : MonoBehaviour
     [SerializeField] private Button toggleMenuButton;  // Button to toggle the popup menu visibility
     [SerializeField] private InputField modelNameInput;
     [SerializeField] private InputField descriptionInput;
-    [SerializeField] private Text statusMessage; // Text element to display messages to the user
     [SerializeField] private Dropdown modelDropdown;  // Assign this in the Inspector
+    [SerializeField] private Toggle masterplanToggle;  // Assign this in the Inspector (Toggle for setting as masterplan)
+    [SerializeField] private Text statusMessage; // Text element to display messages to the user
 
     [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
     [SerializeField] private string postUrl = "https://3ddelft01.bk.tudelft.nl:80/upload/object";  // URL for POST request (replace with actual URL)
@@ -71,6 +71,7 @@ public class SaveToDB : MonoBehaviour
             // Populate the fields with default values
             modelNameInput.text = selectedModel.name;
             descriptionInput.text = "Enter a description...";
+            masterplanToggle.isOn = false; // Reset masterplan toggle
 
             // Show the popup
             modelSpecificationPopup.SetActive(true);
@@ -115,6 +116,63 @@ public class SaveToDB : MonoBehaviour
         StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
     }
 
+    // Function to check if a model is selected
+    private void CheckSelectedModel()
+    {
+        if (selectedModel != null)
+        {
+            Debug.Log($"Selected model: {selectedModel.name}");
+        }
+        else
+        {
+            Debug.LogError("No model is currently selected.");
+        }
+    }
+
+    // Function to list all possible objects for selection
+    private void ListAllSelectableObjects()
+    {
+        // Find all objects with a MeshRenderer component (or use your specific filter)
+        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+
+        Debug.Log("Listing all selectable objects:");
+
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.GetComponent<MeshRenderer>() != null)  // Assuming you want models with MeshRenderer
+            {
+                Debug.Log($"Selectable Object: {obj.name}");
+
+                // For now, select the first object found (for testing)
+                if (selectedModel == null)
+                {
+                    selectedModel = obj;
+                    Debug.Log($"Automatically selected model: {selectedModel.name}");
+                }
+            }
+        }
+    }
+
+    // Raycast for model selection when clicking
+    private void SelectModelByClick()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            // Check if the clicked object has a MeshRenderer (assuming models have this component)
+            if (hit.collider != null && hit.collider.gameObject.GetComponent<MeshRenderer>() != null)
+            {
+                selectedModel = hit.collider.gameObject;  // Set the selected model
+                Debug.Log($"Model selected by click: {selectedModel.name}");
+
+                // You can also update the UI to show the selected model's name
+                modelNameInput.text = selectedModel.name;  // Update model name in UI
+            }
+        }
+    }
+
 
     // Save the model's metadata and .obj file to a directory
     private void SaveModelToDirectory(GameObject model, string modelName, string description, Vector3 localPosition, Vector3 rotation, Vector3 scale)
@@ -140,7 +198,7 @@ public class SaveToDB : MonoBehaviour
             position = new Vector3(localPosition.x, localPosition.y, localPosition.z),
             rotation = new Vector3(rotation.x, rotation.y, rotation.z),
             scale = new Vector3(scale.x, scale.y, scale.z),
-            is_masterplan = true
+            is_masterplan = masterplanToggle.isOn // Save the toggle state
         };
 
         string jsonMetadata = JsonConvert.SerializeObject(metadata, Formatting.Indented);
@@ -216,7 +274,6 @@ public class SaveToDB : MonoBehaviour
         modelDropdown.onValueChanged.AddListener(delegate { SelectModelFromDropdown(); });
     }
 
-
     // Select a model from the dropdown
     private void SelectModelFromDropdown()
     {
@@ -226,63 +283,6 @@ public class SaveToDB : MonoBehaviour
 
         // Update UI input fields
         modelNameInput.text = selectedModel.name;
-    }
-
-    // Function to check if a model is selected
-    private void CheckSelectedModel()
-    {
-        if (selectedModel != null)
-        {
-            Debug.Log($"Selected model: {selectedModel.name}");
-        }
-        else
-        {
-            Debug.LogError("No model is currently selected.");
-        }
-    }
-
-    // Function to list all possible objects for selection
-    private void ListAllSelectableObjects()
-    {
-        // Find all objects with a MeshRenderer component (or use your specific filter)
-        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
-
-        Debug.Log("Listing all selectable objects:");
-
-        foreach (GameObject obj in allObjects)
-        {
-            if (obj.GetComponent<MeshRenderer>() != null)  // Assuming you want models with MeshRenderer
-            {
-                Debug.Log($"Selectable Object: {obj.name}");
-
-                // For now, select the first object found (for testing)
-                if (selectedModel == null)
-                {
-                    selectedModel = obj;
-                    Debug.Log($"Automatically selected model: {selectedModel.name}");
-                }
-            }
-        }
-    }
-
-    // Raycast for model selection when clicking
-    private void SelectModelByClick()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            // Check if the clicked object has a MeshRenderer (assuming models have this component)
-            if (hit.collider != null && hit.collider.gameObject.GetComponent<MeshRenderer>() != null)
-            {
-                selectedModel = hit.collider.gameObject;  // Set the selected model
-                Debug.Log($"Model selected by click: {selectedModel.name}");
-
-                // You can also update the UI to show the selected model's name
-                modelNameInput.text = selectedModel.name;  // Update model name in UI
-            }
-        }
     }
 
     // Coroutine to clear the status message after a delay
@@ -328,4 +328,5 @@ public class SaveToDB : MonoBehaviour
             SelectModelByClick();
         }
     }
+
 }
