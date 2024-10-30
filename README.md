@@ -23,3 +23,21 @@ $ git update-index --skip-worktree .\Assets\Scriptables\Projects\CurrentProject.
 
 At time of writing, no convenient way has been found to use a ScriptableObject for runtime configuration without
 this drawback.
+
+# Setting up custom 3D Netherlands Project
+
+## Introduction
+## Getting Started
+## Configuring the new municipality
+## Loading new layers
+
+### WFS
+1. What is WFS?
+2. The 3D Netherlands WFS functionality
+3. How to import a WFS layer into 3D Netherlands
+
+
+
+## 5. Making and loading 3D tiles
+## 6. Loading and storing OBJ
+## 7. Future
