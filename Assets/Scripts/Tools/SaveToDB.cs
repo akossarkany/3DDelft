@@ -183,7 +183,7 @@ public class SaveToDB : MonoBehaviour
             Directory.CreateDirectory(saveDirectory);
         }
 
-        string objFilePath = Path.Combine(saveDirectory, modelName + ".obj");
+        string objFilePath = Path.Combine(saveDirectory, modelName) + ".obj";
         string jsonFilePath = Path.Combine(saveDirectory, modelName + ".json");
 
         // 1. Save the OBJ file (This part requires an OBJ exporter, replace this with actual OBJ saving logic)
@@ -218,15 +218,23 @@ public class SaveToDB : MonoBehaviour
     // Send metadata to a database
     private IEnumerator SendDataToDatabase(string jsonMetadata, string objFilePath)
     {
+        if (LoginManager.token is not string)
+        {
+            Debug.LogError("No authentication token.");
+            yield break;
+        }
+
         WWWForm form = new WWWForm();
         form.AddField("metadata", jsonMetadata);
 
         // Add the OBJ file to the form
-        byte[] objFileData = File.ReadAllBytes(objFilePath);
-        form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "application/octet-stream");
+        byte[] objFileData = File.ReadAllBytes(objFilePath + ".json");
+        form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "text/plain");
 
         using (UnityWebRequest www = UnityWebRequest.Post(postUrl, form))
         {
+            www.SetRequestHeader("Authorization", $"Bearer {LoginManager.token}");
+            www.certificateHandler = new BypassCertificateHandler();
             yield return www.SendWebRequest();
 
             if (www.result == UnityWebRequest.Result.Success)
@@ -329,4 +337,16 @@ public class SaveToDB : MonoBehaviour
         }
     }
 
+
+    // Custom certificate handler to bypass SSL certificate validation
+    private class BypassCertificateHandler : CertificateHandler
+    {
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            // Always return true to bypass SSL certificate validation
+            return true;
+        }
+    }
+
 }
+

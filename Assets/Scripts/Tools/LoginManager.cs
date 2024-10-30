@@ -13,7 +13,7 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private Text debugText; // Text element for displaying messages on the screen
     private string loginUrl = "https://3ddelft01.bk.tudelft.nl:80/login"; // Real login URL
     private string authCheckUrl = "https://3ddelft01.bk.tudelft.nl:80/validate"; // Real auth-check URL
-
+    public static string token;
     private bool isAuthenticated = false;
 
     private void Start()
@@ -104,6 +104,7 @@ public class LoginManager : MonoBehaviour
                     Debug.Log("Token validated successfully, switching buttons.");
                     debugText.text = "Authentication successful!"; // Show success message
                     isAuthenticated = true;
+                    LoginManager.token = token;
                     ShowToggleMenuButton(); // Show the toggle button after successful authentication
                 }
                 else
