@@ -51,10 +51,10 @@ It allows users to access and retrieve geospatial vector data (e.g., buildings, 
 <img width="877" alt="LoadWFSLayer4" src="https://github.com/user-attachments/assets/1c41a9ff-998d-44ee-b726-6a824b18f354">
 
 #### Customizing WFS layers in Unity
-<img width="1259" alt="image" src="https://github.com/user-attachments/assets/773c9f58-512c-4448-9e7d-906865e0402c">
 1. As the project is initialized by the previous steps, you can open "Main Delft" and Click "ProjectDataHandler", and change the Default Project File to the.nl3d file which you saved from the last step.
 2. Click the ConfigLoader and enter Play Mode to check if the WFS layers are loaded.
 3. Go to File > Building Settings, build and run the project again.
+<img width="1259" alt="image" src="https://github.com/user-attachments/assets/773c9f58-512c-4448-9e7d-906865e0402c">
 
 ### WMS
 #### What is WMS?
