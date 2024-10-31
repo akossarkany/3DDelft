@@ -1,21 +1,21 @@
-# 8. Client (Unity WebGL)
+# Client (Unity WebGL)
 
 This section focuses on the Unity WebGL application, detailing how it interacts with the Flask server for downloading, uploading, and managing metadata of OBJ files. It also covers the login and authentication workflow using Bearer tokens.
 
-## 8.1 Object Download
+## Object Download
 
 In the Unity WebGL client, OBJ files are requested from the server and rendered in the Unity scene. The download process includes web requests, object download, and metadata management to ensure correct object placement.
 
-### 8.1.1 Data Flow in Unity
+### Data Flow in Unity
 
 The data flow in Unity starts when a user requests an OBJ file, which is fetched via a `UnityWebRequest`. Once the request is completed, the file is parsed and placed into the scene.
 
 The main flow:
-- A GET request is sent to retrieve the OBJ file.
-- Upon success, the OBJ data is processed.
-- The metadata, such as position and scale, is also downloaded and applied.
+- A GET request is sent to retrieve the OBJ file. Once its received, it is stored in memory for further processing
+- The obj data is processed using a modified verion of Netherland3D's objet reader.
+- Once a game object is created for the downloaded obj file, the metadata, such as position and scale, is also downloaded and applied.
 
-### 8.1.2 Web Request Flow
+### Web Request Flow
 
 Unity uses `UnityWebRequest.Get()` to request the OBJ files. The response is handled as follows:
 
@@ -36,7 +36,7 @@ IEnumerator DownloadObject(string url, Action<string> callback)
 }
 ```
 
-### 8.1.3 OBJ Download and Layer Spawning
+### OBJ Download and Layer Spawning
 
 After the OBJ file is successfully downloaded, it is parsed and placed into the appropriate layer within Unity. Each layer represents different parts of the scene (terrain, buildings, etc.).
 
@@ -45,7 +45,7 @@ For example:
 - The object is spawned into the correct Unity layer.
 - The metadata is downloaded separately and applied to ensure correct placement.
 
-### 8.1.4 Metadata Downloads and Overwrites
+### Metadata Downloads and Overwrites
 
 Metadata is critical for placing the downloaded OBJ model accurately in the Unity scene. The metadata is requested as a JSON object from the server and then applied to the model.
 
@@ -79,11 +79,11 @@ void ApplyMetadata(GameObject obj, Metadata metadata)
 }
 ```
 
-## 8.2 Object Upload
+## Object Upload
 
 Uploading OBJ models to the server involves sending the object data along with the metadata, using Bearer token authentication.
 
-### 8.2.1 Implementation of Login Interface
+### Implementation of Login Interface
 
 The login flow in Unity WebGL is managed by the `LoginManager.cs` script. Upon login, the user is redirected to a login page where they obtain a Bearer token. The token is then pasted into the application for further authentication.
 
@@ -121,7 +121,7 @@ private IEnumerator CheckAuthentication(string token)
 }
 ```
 
-### 8.2.2 Object Retrieval and Upload
+### Object Retrieval and Upload
 
 After the user is authenticated, they can upload OBJ files to the server. The process involves:
 1. Selecting an object in the scene.
@@ -153,7 +153,7 @@ IEnumerator UploadObject(string url, string objData)
 }
 ```
 
-### 8.2.3 Metadata Collection and Upload to Server
+### Metadata Collection and Upload to Server
 
 Once the OBJ file is uploaded, the metadata is collected and sent to the server using a POST request.
 
@@ -184,11 +184,11 @@ IEnumerator SendDataToDatabase(string jsonMetadata, string objFilePath)
 }
 ```
 
-## 8.3 Authentication
+## Authentication
 
 Authentication is managed using Bearer tokens, which are received after the user logs in and used in subsequent requests.
 
-### 8.3.1 Basic Authentication
+### Basic Authentication
 
 Users are first authenticated using basic HTTP authentication to obtain the Bearer token. The token is then used to authenticate future requests.
 
@@ -206,7 +206,7 @@ private IEnumerator CheckAuthentication(string token)
 }
 ```
 
-### 8.3.2 Bearer Token Usage
+### Bearer Token Usage
 
 Once the Bearer token is obtained, it is included in the headers of future requests, such as object uploads and downloads.
 
@@ -214,7 +214,7 @@ Once the Bearer token is obtained, it is included in the headers of future reque
 request.SetRequestHeader("Authorization", "Bearer " + bearerToken);
 ```
 
-### 8.3.3 Authentication Workflow
+### Authentication Workflow
 
 1. **Login**: Users are directed to the login page and obtain a Bearer token.
 2. **Token Submission**: Users paste the token into Unity and submit it for verification.
