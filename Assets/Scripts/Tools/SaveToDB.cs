@@ -36,6 +36,7 @@ public class SaveToDB : MonoBehaviour
     private bool isPopupVisible = false;  // Track the popup visibility state
     private GameObject selectedModel;
     private static LayerData selectedlayer;
+    private string ogLayerName;
 
 
     //private string jsonMetadata;
@@ -60,6 +61,11 @@ public class SaveToDB : MonoBehaviour
     private void TogglePopupMenu()
     {
         isPopupVisible = !isPopupVisible;
+        if (!isPopupVisible) {
+            modelNameInput.text = "";
+            descriptionInput.text = "";
+            masterplanToggle.isOn = false;
+        }
         modelSpecificationPopup.SetActive(isPopupVisible);  // Toggle the popup's visibility
     }
 
@@ -170,24 +176,40 @@ public class SaveToDB : MonoBehaviour
     // Raycast for model selection when clicking
     private void SelectModelByClick()
     {
-
-        var selectedLayers = ProjectData.Current.RootLayer.SelectedLayers.ToList();
-        if (selectedLayers.Count() > 1)
+        if (isPopupVisible)
         {
-            Debug.LogError("Only one layer should be selected");
-            return;
-        }
+            var selectedLayers = ProjectData.Current.RootLayer.SelectedLayers.ToList();
+            if (selectedLayers.Count() > 1)
+            {
+                Debug.LogError("Only one layer should be selected");
+                return;
+            }
 
-        selectedlayer = selectedLayers.First();
-        modelNameInput.text = selectedlayer.Name;
-        selectedModel = GameObject.Find(selectedlayer.Name);
-        if (selectedModel != null)
-        { 
-            Debug.Log($"Found {selectedModel.name}");
-        }
-        else
-        {
-            Debug.LogError($"No Game Object is named {selectedlayer.Name}");
+            selectedlayer = selectedLayers.First();
+
+            if (modelNameInput.text != ogLayerName && modelNameInput.text != "")
+            {
+                Debug.Log("Cannot overrite modified name. Delete the name before changing it.");
+                return;
+            }
+
+
+            modelNameInput.text = selectedlayer.Name;
+            ogLayerName = selectedlayer.Name;
+            selectedModel = GameObject.Find(selectedlayer.Name);
+            if (selectedModel != null)
+            {
+                Debug.Log($"Found {selectedModel.name}");
+                Description d = selectedModel.GetComponent<Description>();
+                if (d != null) { 
+                    descriptionInput.text = d.description;
+                    masterplanToggle.isOn = d.master;
+                }
+            }
+            else
+            {
+                Debug.LogError($"No Game Object is named {selectedlayer.Name}");
+            }
         }
         //Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
         //RaycastHit hit;
@@ -270,7 +292,8 @@ public class SaveToDB : MonoBehaviour
             Debug.LogError("No authentication token.");
             yield break;
         }
-
+        selectedlayer.Name = modelNameInput.text;
+        selectedModel.name = modelNameInput.text;
         //WWWForm form = new WWWForm();
         //form.AddField("metadata", jsonMetadata);
         var metadata = new BuildingMetadata

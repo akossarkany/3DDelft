@@ -2788,7 +2788,9 @@ MonoBehaviour:
   masterplanToggle: {fileID: 1213243244}
   statusMessage: {fileID: 1214482766}
   saveDirectory: Assets/ImportedOBJ_permanent
-  postUrl: https://3ddelft01.bk.tudelft.nl:80/upload/object
+  senObjTo: https://3ddelft01.bk.tudelft.nl:80/upload/object
+  sendMetaTo: https://3ddelft01.bk.tudelft.nl:80/upload/meta
+  existUrl: https://3ddelft01.bk.tudelft.nl:80/exists/object/
 --- !u!114 &1349027655 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2144003548613182812, guid: 9963fec33e379324db2affcb3f83332f,

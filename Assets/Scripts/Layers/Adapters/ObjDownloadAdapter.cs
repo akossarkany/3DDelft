@@ -152,6 +152,7 @@ namespace Netherlands3D.Twin
                         self.Id = metadata.obj_id;
                         self.SetParent(metadata.is_master ? this.masterplans : this.objects);
                         self.Name = metadata.name;
+                        
 
 
                         var truePosition = new Coordinate(
@@ -171,6 +172,11 @@ namespace Netherlands3D.Twin
                         newLayer.transform.parent.position = v;
                         newLayer.transform.parent.rotation = Quaternion.Euler(metadata.rotation);
                         newLayer.transform.parent.localScale = metadata.scale;
+
+                        newLayer.transform.parent.gameObject.AddComponent<Description>();
+                        Description d = newLayer.transform.parent.gameObject.GetComponent<Description>();
+                        d.description = metadata.description;
+                        d.master = metadata.is_master;
                     }
                     else
                     {
