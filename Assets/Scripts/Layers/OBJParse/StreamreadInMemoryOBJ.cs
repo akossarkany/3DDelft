@@ -191,9 +191,9 @@ namespace Netherlands3D.ObjImporter.ParseOBJ
         {
             Debug.Log("StreamReadFile: " + filename);
 
-            vertices.SetupWriting("vertices");
-            normals.SetupWriting("normals");
-            uvs.SetupWriting("uvs");
+            vertices.SetupWriting("vertices" + filename);
+            normals.SetupWriting("normals" + filename);
+            uvs.SetupWriting("uvs" + filename);
 
             //setup first submesh;
             AddSubMesh("default");

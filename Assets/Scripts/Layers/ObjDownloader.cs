@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Newtonsoft.Json;
 using Netherlands3D.Twin.Layers;
+using Netherlands3D.Twin.Projects;
 
 namespace Netherlands3D.Twin
 {
@@ -12,22 +13,19 @@ namespace Netherlands3D.Twin
         [SerializeField] public ObjDownloadAdapter remoteAdapter;
         public List<JsonObjID> jsonObjectList { get; set; }
 
+        private void Start()
+        {
+            if (!remoteAdapter.isLoaded) { 
+                StartCoroutine(remoteAdapter.LoadRemoteObjects(this));            
+            }
+            //StartCoroutine(remoteAdapter.LoadRemoteObjects(this));
+        }
+
         // Start is called before the first frame update
-        void Start()
-        {
-            StartCoroutine(remoteAdapter.LoadRemoteObjects(this));
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
-
-        private void OnEnable()
-        {
-            
-        }
+        //private void OnEnable()
+        //{
+        //    if (!remoteAdapter.isLoaded) { StartCoroutine(remoteAdapter.LoadRemoteObjects(this)); }
+        //}
 
         public void LoadMetaInformation(string ObjectID, GameObject newLayer)
         {
