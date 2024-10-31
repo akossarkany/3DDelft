@@ -27,7 +27,7 @@ namespace Netherlands3D.Twin
         [Tooltip("Offset the Y position of the line")] [SerializeField]
         private float offsetY = 0.0f;
 
-        [SerializeField] private float lineDiameter = 0.2f;
+        [SerializeField] private float lineDiameter = 2f;
 
         public List<List<Coordinate>> Lines { get; private set; }
 

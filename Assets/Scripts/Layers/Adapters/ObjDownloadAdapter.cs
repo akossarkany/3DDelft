@@ -7,6 +7,7 @@ using System.IO;
 using System;
 using UnityEngine.Events;
 using Netherlands3D.Twin.Layers;
+using Netherlands3D.Twin.Projects;
 using Netherlands3D.Coordinates;
 using Netherlands3D.DB;
 
@@ -21,11 +22,20 @@ namespace Netherlands3D.Twin
         [SerializeField] public string QueryEndpoint;
         [SerializeField] public string MetaEndpoint;
         [SerializeField] public string ObjEndpoint;
+        public bool isLoaded = false;
+        private bool isLoading = false;
+        private List<string> objsToDownload = new List<string>();
+        private ObjDownloader downloader;
         [SerializeField] public UnityEvent<string> fileAdapter = new();
+
+
+        private FolderLayer masterplans { get; set; }
+        private FolderLayer objects { get; set; }
 
 
         public IEnumerator LoadRemoteObjects(ObjDownloader caller)
         {
+            downloader = caller;
             string url = "https://" + this.RemoteHost + ":" + this.Port + "/" + QueryEndpoint;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
@@ -50,7 +60,11 @@ namespace Netherlands3D.Twin
                         if (jsonObj != null)
                         {
                             Debug.Log("Requesting object: " + jsonObj.obj_id);
-                            caller.StartCoroutine(DownloadObjFile(jsonObj.obj_id));
+                            if (!ObjectDB.contains(jsonObj.obj_id))
+                            {
+                                objsToDownload.Add(jsonObj.obj_id);
+                                //yield return caller.StartCoroutine(DownloadObjFile(jsonObj.obj_id));
+                            }
                         }
                         else
                         {
@@ -59,7 +73,8 @@ namespace Netherlands3D.Twin
 
                         
                     }
-
+                    //isLoading = false;
+                    downloader.StartCoroutine(DownloadObjFile());
                 }
                 else
                 {
@@ -70,8 +85,15 @@ namespace Netherlands3D.Twin
         }
 
 
-        IEnumerator DownloadObjFile(string fileName)
+        IEnumerator DownloadObjFile()
         {
+            if (objsToDownload.Count == 0)
+            {
+                isLoaded = true;
+                yield break;
+            }
+            string fileName = objsToDownload[0];
+            objsToDownload.RemoveAt(0);
             string url = "https://" + this.RemoteHost + ":" + this.Port + "/" + this.ObjEndpoint + "/" + fileName;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
@@ -115,31 +137,58 @@ namespace Netherlands3D.Twin
                     Debug.Log("Metadata received. Processing...");
                     JsonMetaData metadata = JsonConvert.DeserializeObject<List<JsonMetaData>>(request.downloadHandler.text)[0];
 
+                    if (this.masterplans == null)
+                    {
 
-                    newLayer.name = metadata.name;
+                        this.masterplans = new FolderLayer("Masterplans");
+                        this.objects = new FolderLayer("HD Objects");
+                    }
+
+                    if (metadata != null)
+                    {
+
+                        LayerData self = ProjectData.Current.RootLayer.find(ObjectID + ".download");
+
+                        self.Id = metadata.obj_id;
+                        self.SetParent(metadata.is_master ? this.masterplans : this.objects);
+                        self.Name = metadata.name;
+                        
 
 
-                    var truePosition = new Coordinate(
-                        CoordinateSystem.RDNAP,
-                        metadata.position.x,
-                        metadata.position.y,
-                        metadata.position.z
-                     );
-                    var pos = CoordinateConverter.ConvertTo(truePosition, CoordinateSystem.Unity);
-                    Vector3 v = new Vector3(
-                        (float)pos.Points[0],
-                        (float)pos.Points[1],
-                        (float)pos.Points[2]
-                    );
-                    newLayer.transform.position = v;
-                    newLayer.transform.rotation = Quaternion.Euler(metadata.rotation);
-                    newLayer.transform.localScale = metadata.scale;
+                        var truePosition = new Coordinate(
+                            CoordinateSystem.RDNAP,
+                            metadata.position.x,
+                            metadata.position.y,
+                            metadata.position.z
+                         );
+                        var pos = CoordinateConverter.ConvertTo(truePosition, CoordinateSystem.Unity);
+                        Vector3 v = new Vector3(
+                            (float)pos.Points[0],
+                            (float)pos.Points[1],
+                            (float)pos.Points[2]
+                        );
+                        newLayer.name = ObjectID + ".download";
+                        newLayer.transform.parent.gameObject.name = metadata.name;
+                        newLayer.transform.parent.position = v;
+                        newLayer.transform.parent.rotation = Quaternion.Euler(metadata.rotation);
+                        newLayer.transform.parent.localScale = metadata.scale;
+
+                        newLayer.transform.parent.gameObject.AddComponent<Description>();
+                        Description d = newLayer.transform.parent.gameObject.GetComponent<Description>();
+                        d.description = metadata.description;
+                        d.master = metadata.is_master;
+                    }
+                    else
+                    {
+                        Debug.LogError("Metadata was null. Aborting");
+                    }
             
                 }
                 else
                 {
                     Debug.LogError("Failed to download metadata for file. " + request.error);
                 }
+                downloader.StartCoroutine(DownloadObjFile());
             }
         }
 
@@ -158,7 +207,7 @@ namespace Netherlands3D.Twin
             public Vector3 position;
             public Vector3 rotation;
             public Vector3 scale;
-            public bool is_masterplan;
+            public bool is_master;
             
         }
 

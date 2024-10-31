@@ -21,8 +21,9 @@ namespace Netherlands3D.Twin
         {
             var fullPath = localFile.LocalFilePath;
             var fileName = Path.GetFileName(fullPath);
+            Debug.Log($"Importing from {fullPath}");
             ObjSpawner newLayer = Instantiate(layerPrefab);
-            newLayer.gameObject.name = fileName;
+            newLayer.gameObject.name = fullPath;
 
             var propertyData = newLayer.PropertyData as ObjPropertyData;
             propertyData.ObjFile = AssetUriFactory.CreateProjectAssetUri(fullPath);

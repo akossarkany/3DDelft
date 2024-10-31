@@ -2,23 +2,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 public class LoginManager : MonoBehaviour
 {
     [SerializeField] private Button loginButton;
-    [SerializeField] private Button saveButton; // Initially disabled
+    [SerializeField] private Button toggleMenuButton; // Button to toggle the model specification popup
     [SerializeField] private InputField tokenInputField; // Input field for user to paste token
     [SerializeField] private Button submitTokenButton; // Button to submit the token from input field
     [SerializeField] private Text debugText; // Text element for displaying messages on the screen
     private string loginUrl = "https://3ddelft01.bk.tudelft.nl:80/login"; // Real login URL
     private string authCheckUrl = "https://3ddelft01.bk.tudelft.nl:80/validate"; // Real auth-check URL
-
+    public static string token;
     private bool isAuthenticated = false;
 
     private void Start()
     {
-        // Initially, show the login button and hide the save button, input field, and submit button
-        saveButton.gameObject.SetActive(false);
+        // Initially, show the login button and hide the toggle button, input field, and submit button
+        toggleMenuButton.gameObject.SetActive(false); // Hide the toggle menu button
         tokenInputField.gameObject.SetActive(false); // Hide input field initially
         submitTokenButton.gameObject.SetActive(false); // Hide submit button initially
         debugText.text = ""; // Clear the debug message initially
@@ -42,7 +43,12 @@ public class LoginManager : MonoBehaviour
     // Called when the user submits a token via the input field
     private void OnTokenSubmit()
     {
-        string token = tokenInputField.text;
+        // Trim and remove non-visible characters like zero-width spaces, non-breaking spaces, etc.
+        string token = Regex.Replace(tokenInputField.text, @"\s+", "").Trim();
+
+        Debug.Log("Original Token Length: " + tokenInputField.text.Length);
+        Debug.Log("Cleaned Token Length: " + token.Length);
+
         if (!string.IsNullOrEmpty(token))
         {
             Debug.Log("Token submitted: " + token);
@@ -52,7 +58,7 @@ public class LoginManager : MonoBehaviour
             tokenInputField.gameObject.SetActive(false);
             submitTokenButton.gameObject.SetActive(false);
 
-            OnLoginCallback(token);  // Pass the token to the login callback
+            OnLoginCallback(token);  // Pass the cleaned token to the login callback
         }
         else
         {
@@ -98,7 +104,8 @@ public class LoginManager : MonoBehaviour
                     Debug.Log("Token validated successfully, switching buttons.");
                     debugText.text = "Authentication successful!"; // Show success message
                     isAuthenticated = true;
-                    SwitchToSaveButton(); // Switch to the save button after successful authentication
+                    LoginManager.token = token;
+                    ShowToggleMenuButton(); // Show the toggle button after successful authentication
                 }
                 else
                 {
@@ -117,13 +124,12 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    private void SwitchToSaveButton()
+    private void ShowToggleMenuButton()
     {
-        // Hide the login button and show the save button
-        Debug.Log("Switching from login button to save button.");
-        debugText.text = "You can now save."; // Show message indicating the next step
+        // Hide the login button and show the toggle menu button
+        Debug.Log("Switching from login button to toggle menu button.");
         loginButton.gameObject.SetActive(false);
-        saveButton.gameObject.SetActive(true);
+        toggleMenuButton.gameObject.SetActive(true); // Show the toggle button after authentication
     }
 
     // Custom certificate handler to bypass SSL certificate validation

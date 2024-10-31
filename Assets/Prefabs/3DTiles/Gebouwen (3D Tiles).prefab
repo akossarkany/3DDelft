@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: -2324982978833452817}
   - component: {fileID: -3206187947326476088}
   - component: {fileID: -250617364918305391}
+  - component: {fileID: -5221367994013224824}
   m_Layer: 7
   m_Name: Gebouwen (3D Tiles)
   m_TagString: Untagged
@@ -61,10 +62,12 @@ MonoBehaviour:
       boundingVolumeType: 0
       values: []
     BottomLeft:
+      coordinateSystem: 0
       extraLongitudeRotation: 0
       extraLattitudeRotation: 0
       Points: []
     TopRight:
+      coordinateSystem: 0
       extraLongitudeRotation: 0
       extraLattitudeRotation: 0
       Points: []
@@ -138,10 +141,12 @@ MonoBehaviour:
       boundingVolumeType: 0
       values: []
     BottomLeft:
+      coordinateSystem: 0
       extraLongitudeRotation: 0
       extraLattitudeRotation: 0
       Points: []
     TopRight:
+      coordinateSystem: 0
       extraLongitudeRotation: 0
       extraLattitudeRotation: 0
       Points: []
@@ -189,6 +194,7 @@ MonoBehaviour:
     boundingRegion: []
   tileCount: 0
   nestingDepth: 0
+  parseAssetMetadata: 0
   parseSubObjects: 0
   maxScreenHeightInPixels: 1080
   maximumScreenSpaceError: 5
@@ -198,7 +204,13 @@ MonoBehaviour:
   unsupportedExtensionsParsed:
     m_PersistentCalls:
       m_Calls: []
+  OnServerResponseReceived:
+    m_PersistentCalls:
+      m_Calls: []
   OnServerRequestFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  OnLoadAssetMetadata:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &7109194962515795805
@@ -260,14 +272,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 284d1c20d5a85488d9fd5444dc075baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabIdentifier: 416bb3a0b4137324d860b58a6e8f484e
   onShow:
     m_PersistentCalls:
       m_Calls: []
   onHide:
     m_PersistentCalls:
       m_Calls: []
-  allowURLEditInPropertySection: 0
-  openPropertiesOnStart: 1
+  usePropertySections: 1
   UnsupportedExtensionsMessage:
     m_PersistentCalls:
       m_Calls:
@@ -327,7 +339,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 630f741154ed48488dc6602ef25dab3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  origin: {fileID: 0}
   worldTransformShifter: {fileID: -250617364918305391}
   referenceCoordinateSystem: 4326
   onPreShift:
@@ -346,5 +357,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 89676a9f69324d308c537c8970b47571, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-5221367994013224824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7974831043381414785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fae4796999cd624cbaec2b6fd54a451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
