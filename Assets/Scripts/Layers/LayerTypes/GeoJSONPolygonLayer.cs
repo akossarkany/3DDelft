@@ -5,10 +5,12 @@ using System.Linq;
 using GeoJSON.Net;
 using GeoJSON.Net.Feature;
 using GeoJSON.Net.Geometry;
+using GG.Extensions;
 using Netherlands3D.Coordinates;
 using Netherlands3D.SelectionTools;
 using Netherlands3D.Twin.Projects;
 using Netherlands3D.Twin.UI.LayerInspector;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Netherlands3D.Twin.Layers
@@ -18,7 +20,7 @@ namespace Netherlands3D.Twin.Layers
     {
         public List<FeaturePolygonVisualisations> SpawnedVisualisations = new();
 
-        private bool randomizeColorPerFeature = true;
+        private bool randomizeColorPerFeature = false;
         public bool RandomizeColorPerFeature { get => randomizeColorPerFeature; set => randomizeColorPerFeature = value; }
 
         [SerializeField] private Material polygonVisualizationMaterial;
@@ -48,6 +50,31 @@ namespace Netherlands3D.Twin.Layers
             // Skip if feature already exists (comparison is done using hashcode based on geometry)
             if (SpawnedVisualisations.Any(f => f.feature.GetHashCode() == feature.GetHashCode()))
                 return;
+
+            /*if (feature.Properties.ContainsKey("WIJKNUMMER")) 
+            {
+                RandomizeColorPerFeature = true;
+            }
+            else if (feature.Properties.ContainsKey("BUURTNR") && feature.Properties.ContainsKey("BUURTNAAM"))
+            {
+                RandomizeColorPerFeature = true;
+            }
+
+            if (feature.Properties.ContainsKey("NAAM"))
+            {
+                string naam = feature.Properties["NAAM"].ToString(); // Convert to string for comparison
+
+                // Define valid names
+                var validNames = new[] { "Agnetapark", "Nieuwe plantage", "TU-wijk", "Binnenstad" };
+
+                // Check if naam is in the valid names
+                if (validNames.Contains(naam))
+                {
+                    RandomizeColorPerFeature = true;
+                }
+            }*/
+
+
 
             // Create visual with random color if enabled
             Material featureRenderMaterial = GetMaterialInstance();

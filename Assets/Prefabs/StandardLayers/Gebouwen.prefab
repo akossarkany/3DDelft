@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -1780917372914214898}
   - component: {fileID: 2626529733265145809}
   - component: {fileID: -1431062917293908258}
+  - component: {fileID: -3144099851856666009}
   m_Layer: 7
   m_Name: Gebouwen
   m_TagString: Untagged
@@ -159,7 +160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 630f741154ed48488dc6602ef25dab3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  origin: {fileID: 0}
   worldTransformShifter: {fileID: -1431062917293908258}
   referenceCoordinateSystem: 2
   onPreShift:
@@ -178,5 +178,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d2f5ce46c2e453f85e8e5a75fff8862, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-3144099851856666009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4311489376399559593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fae4796999cd624cbaec2b6fd54a451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
