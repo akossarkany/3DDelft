@@ -14,6 +14,6 @@
         -
     - Configuring Streaming Assets with saved project (.nl3d) file
 
-[< Introduction](./introduction.md) | [Next: Configuring Municipality >](./configuring-municipality.md)
+[< Introduction](./introduction.md) | [Home](./index.md) | [Next: Configuring Municipality >](./configuring-municipality.md)
 
 [Pages info](./pages/example/pages.md)

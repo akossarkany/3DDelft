@@ -7,6 +7,6 @@
         - Export it as GeoJSON
         - Put it next to application files
 
-[< Getting Started](./getting-started.md) | [Next: Loading 2D Layers >](./loading-2D-layers.md)
+[< Getting Started](./getting-started.md) | [Home](./index.md) | [Next: Loading 2D Layers >](./loading-2D-layers.md)
 
 [Pages info](./pages/example/pages.md)

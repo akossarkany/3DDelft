@@ -45,6 +45,6 @@
             - Uses the received bearer token when sending future requests
             - Showcase the authentication workflow
 
-[< Making 3D tiles](./making-3D-tiles.md) | [Next: Future >](./future.md)
+[< Making 3D tiles](./making-3D-tiles.md) | [Home](./index.md) | [Next: Future >](./future.md)
 
 [Pages info](./pages/example/pages.md)

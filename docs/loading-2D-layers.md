@@ -13,6 +13,6 @@
         - The 3D Netherlands WMS functionality
         - How to import a WMS layer into 3D Netherlands
 
-[< Configuring Municipality](./configuring-municipality.md) | [Next: Making 3D Tiles >](./making-3D-tiles.md)
+[< Configuring Municipality](./configuring-municipality.md) | [Home](./index.md) | [Next: Making 3D Tiles >](./making-3D-tiles.md)
 
 [Pages info](./pages/example/pages.md)
