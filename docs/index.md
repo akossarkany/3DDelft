@@ -1,4 +1,4 @@
-# 3D-Delft: Documentation 
+# Delft3D: Documentation 
 
 ### Table of Content
 1. [Introduction](./introduction.md)

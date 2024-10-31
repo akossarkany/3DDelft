@@ -1,5 +1,3 @@
-# 3D-Delft: Documentation 
-
 # Loading 2D Layers
     - WFS
         - What is WFS?

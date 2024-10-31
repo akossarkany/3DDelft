@@ -1,7 +1,7 @@
 # 6. OBJ Masterplans and Detailed Building Storage in Database
 
 ## Prerequisites
-3D Delft uses a PostgreSQL database and Python to establish and authenticate the connection with the database. Before inserting OBJ models, ensure that you understand the logic and network of the connections.
+Delft3D uses a PostgreSQL database and Python to establish and authenticate the connection with the database. Before inserting OBJ models, ensure that you understand the logic and network of the connections.
 
 ### Install PostgreSQL
 Refer to the official PostgreSQL installation guide [here](https://www.postgresql.org/download/).

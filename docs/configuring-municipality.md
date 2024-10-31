@@ -1,4 +1,4 @@
-# 3D-Delft: Documentation 
+# Delft3D: Documentation 
 
 3. Configuring to new municipality
     - Setting the starting viewpoint of the viewer
