@@ -23,6 +23,9 @@ namespace Netherlands3D.Twin
         [SerializeField] public string MetaEndpoint;
         [SerializeField] public string ObjEndpoint;
         public bool isLoaded = false;
+        private bool isLoading = false;
+        private List<string> objsToDownload = new List<string>();
+        private ObjDownloader downloader;
         [SerializeField] public UnityEvent<string> fileAdapter = new();
 
 
@@ -32,6 +35,7 @@ namespace Netherlands3D.Twin
 
         public IEnumerator LoadRemoteObjects(ObjDownloader caller)
         {
+            downloader = caller;
             string url = "https://" + this.RemoteHost + ":" + this.Port + "/" + QueryEndpoint;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
@@ -58,7 +62,8 @@ namespace Netherlands3D.Twin
                             Debug.Log("Requesting object: " + jsonObj.obj_id);
                             if (!ObjectDB.contains(jsonObj.obj_id))
                             {
-                                caller.StartCoroutine(DownloadObjFile(jsonObj.obj_id));
+                                objsToDownload.Add(jsonObj.obj_id);
+                                //yield return caller.StartCoroutine(DownloadObjFile(jsonObj.obj_id));
                             }
                         }
                         else
@@ -68,7 +73,8 @@ namespace Netherlands3D.Twin
 
                         
                     }
-                    isLoaded = true;
+                    //isLoading = false;
+                    downloader.StartCoroutine(DownloadObjFile());
                 }
                 else
                 {
@@ -79,8 +85,15 @@ namespace Netherlands3D.Twin
         }
 
 
-        IEnumerator DownloadObjFile(string fileName)
+        IEnumerator DownloadObjFile()
         {
+            if (objsToDownload.Count == 0)
+            {
+                isLoaded = true;
+                yield break;
+            }
+            string fileName = objsToDownload[0];
+            objsToDownload.RemoveAt(0);
             string url = "https://" + this.RemoteHost + ":" + this.Port + "/" + this.ObjEndpoint + "/" + fileName;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
@@ -169,6 +182,7 @@ namespace Netherlands3D.Twin
                 {
                     Debug.LogError("Failed to download metadata for file. " + request.error);
                 }
+                downloader.StartCoroutine(DownloadObjFile());
             }
         }
 

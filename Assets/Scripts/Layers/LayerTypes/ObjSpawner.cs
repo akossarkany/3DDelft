@@ -99,7 +99,7 @@ namespace Netherlands3D.Twin.Layers
 
             // Store the file bytes in ObjectDB
             string fileName = Path.GetFileName(tempfilepath).Replace(".temp", "");
-            ObjectDB.insert(fileName, Convert.ToBase64String(fileBytes));
+            ObjectDB.insert(fileName, fileBytes);
 
             Debug.Log($"Stored .obj file in memory with key: {fileName}");  // Log the storage operation
         }

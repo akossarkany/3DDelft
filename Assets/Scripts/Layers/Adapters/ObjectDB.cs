@@ -25,6 +25,15 @@ namespace Netherlands3D.DB
             }
         }
 
+        public static void insert(string key, byte[] value)
+        {
+            key = clearKey(key);
+            if (!DB.ContainsKey(key))
+            {
+                DB.Add(key, value);
+            }
+        }
+
         public static byte[] get(string key)
         {
             key = clearKey(key);

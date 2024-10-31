@@ -15,7 +15,10 @@ namespace Netherlands3D.Twin
 
         private void Start()
         {
-            StartCoroutine(remoteAdapter.LoadRemoteObjects(this));
+            if (!remoteAdapter.isLoaded) { 
+                StartCoroutine(remoteAdapter.LoadRemoteObjects(this));            
+            }
+            //StartCoroutine(remoteAdapter.LoadRemoteObjects(this));
         }
 
         // Start is called before the first frame update

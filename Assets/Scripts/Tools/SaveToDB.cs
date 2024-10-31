@@ -28,7 +28,8 @@ public class SaveToDB : MonoBehaviour
     [SerializeField] private Text statusMessage; // Text element to display messages to the user
 
     [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
-    [SerializeField] private string postUrl = "https://3ddelft01.bk.tudelft.nl:80/upload/object";  // URL for POST request (replace with actual URL)
+    [SerializeField] private string senObjTo = "https://3ddelft01.bk.tudelft.nl:80/upload/object";  // URL for POST request (replace with actual URL)
+    [SerializeField] private string sendMetaTo = "https://3ddelft01.bk.tudelft.nl:80/upload/meta";
     [SerializeField] private string existUrl = "https://3ddelft01.bk.tudelft.nl:80/exists/object/";
 
     private List<GameObject> selectableModels = new List<GameObject>();  // Store available models
@@ -221,8 +222,8 @@ public class SaveToDB : MonoBehaviour
 
     private Vector3 ConvertToRDNAP(Vector3 vec)
     {
-        var truePosition = new Coordinate(CoordinateSystem.RDNAP, vec.x, vec.y, vec.z);
-        var pos = CoordinateConverter.ConvertTo(truePosition, CoordinateSystem.Unity);
+        var truePosition = new Coordinate(CoordinateSystem.Unity, vec.x, vec.y, vec.z);
+        var pos = CoordinateConverter.ConvertTo(truePosition, CoordinateSystem.RDNAP);
         return new Vector3((float)pos.Points[0], (float)pos.Points[1], (float)pos.Points[2]);
     }
 
@@ -275,7 +276,7 @@ public class SaveToDB : MonoBehaviour
         var metadata = new BuildingMetadata
         {
             obj_id = ObjId,  // Generate a unique ID
-            name = selectedModel.name,
+            name = modelNameInput.text,
             description = descriptionInput.text,
             position = ConvertToRDNAP(selectedModel.transform.position),
             rotation = selectedModel.transform.rotation.eulerAngles,
@@ -287,12 +288,16 @@ public class SaveToDB : MonoBehaviour
         byte[] objFileMetadata = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(metadata, Formatting.Indented));
         //form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "text/plain");
 
-        using (UnityWebRequest www = new UnityWebRequest(postUrl, "POST"))
+        string url = Path.Combine(sendMetaTo, ObjId);
+
+        using (UnityWebRequest www = new UnityWebRequest(url, "POST"))
         {
             www.uploadHandler = new UploadHandlerRaw(objFileMetadata);
+            www.downloadHandler = new DownloadHandlerBuffer();
             www.SetRequestHeader("Authorization", $"Bearer {LoginManager.token}");
             www.SetRequestHeader("Content-Type", "application/json");
             www.certificateHandler = new BypassCertificateHandler();
+            Debug.Log($"Sending metadata to: {url}");
             yield return www.SendWebRequest();
 
             if (www.result == UnityWebRequest.Result.Success)
@@ -301,7 +306,7 @@ public class SaveToDB : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Failed to save metadata: " + www.error);
+                Debug.LogError("Failed to save metadata: " + www.downloadHandler.text);
             }
         }
     }
@@ -340,7 +345,7 @@ public class SaveToDB : MonoBehaviour
         //byte[] objFileData = File.ReadAllBytes(objFilePath);
         //form.AddBinaryData("objFile", objFileData, Path.GetFileName(objFilePath), "text/plain");
 
-        using (UnityWebRequest www = new UnityWebRequest(postUrl, "POST"))
+        using (UnityWebRequest www = new UnityWebRequest(senObjTo, "POST"))
         {
             www.uploadHandler = new UploadHandlerRaw(ObjectDB.get(selectedModel.name));
             www.downloadHandler = new DownloadHandlerBuffer();
@@ -351,7 +356,8 @@ public class SaveToDB : MonoBehaviour
 
             if (www.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("Data saved to database successfully.");
+                selectedlayer.Id = www.downloadHandler.text;
+                Debug.Log($"Succesfully saved with Id: {www.downloadHandler.text}");
                 onObjUploaded.Invoke(www.downloadHandler.text);
             }
             else

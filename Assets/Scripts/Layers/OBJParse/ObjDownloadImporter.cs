@@ -78,7 +78,7 @@ namespace Netherlands3D.ObjImporter
         public void StartImporting(System.Action<GameObject> returnResultTo)
         {
             downloader = GameObject.Find("ObjDownloader");
-            if (downloader != null) { Debug.LogError("Downloader not found"); }
+            if (downloader == null) { Debug.LogError("Downloader not found"); }
             needToCancel = false;
             returnObjectTo = returnResultTo;
             if (isbusy)
