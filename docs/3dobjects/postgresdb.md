@@ -11,7 +11,6 @@ CREATE DATABASE delft3d;
 
 Once you created the new database connect to it with `\c delft3d`. Then you can start creating the tables by executing the following scripts. Make sure you use exactly the same names for the tables since this is not configurable in the application.
 ```sql
-
 CREATE TABLE buildings (
     obj_id UUID PRIMARY KEY, 
     name VARCHAR(255) NOT NULL,
@@ -27,7 +26,6 @@ CREATE TABLE buildings (
     scale_z DOUBLE PRECISION NOT NULL,
     is_master BOOLEAN NOT NULL
 );
-
 ```
 
 ```sql
@@ -55,7 +53,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE buildings TO unityuser;GRANT SELEC
 
 ## Configure application
 
-Now that you have set up the databases, open `flaskapp/dbconnect/connection.py` and make sure the connection's configuration matches the values you used during the setup:
+Now that you have set up the databases, open `/var/www/flaskapp/dbconnect/connection.py` and make sure the connection's configuration matches the values you used during the setup:
 
 ```python
 # connection.py

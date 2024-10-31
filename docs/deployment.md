@@ -1,12 +1,20 @@
-# Deploying Delft3D
+# 7. Deploying Delft3D
 
 To deploy Delft3D you will need a server with a public domain name. Furthermore, the server must allow remote connections on port 80 and 443. Make sure you have administator (sudo) priviliges.
 
-## Upload application files
+## 7.1 Download the files from github
 
-### WebGl application files
+Links to be added once zipped project files uploaded to github.
 
-Upload files the build files of Unity (`delft3d.zip`) to your server and move them to `/var/www/delft3d`, such that `/var/www/delft3d/index.html` is a valid path. Then upload the tileset data: `tileset.zip` to the same folder and unzip it. Furthermore, upload `aoi.geojson` to the same folder. 
+- [delft3D]()
+- [flaskapp]()
+- [tileset]()
+
+## 7.2 Upload application files
+
+### WebGL application files
+
+Upload files the build files of Unity (`delft3d.zip`) to your server and move them to `/var/www/delft3d`, such that `/var/www/delft3d/index.html` is a valid path. Then upload the tileset data: `tileset.zip` to `/var/www/delft3d and unzip it. Furthermore, upload `aoi.geojson` to the same folder. 
 
 ### OBJ Upload backend scripts
 
@@ -31,7 +39,7 @@ $ sudo chmod 644 <file_name>
 ```
 
 
-## HTTP server
+## 7.3 HTTP server
 During development the application was tested with [Apache2](https://httpd.apache.org/) webserver. To install Apache2 on [Ubuntu](https://ubuntu.com/) refer to [this tutorial](https://ubuntu.com/tutorials/install-and-configure-apache#1-overview). Once Apache2 is installed, follow [this tutorial]() to enable `SSL` for the website. In the end the `VirtualHost` configuration should look like:
 
 ```xml
@@ -108,6 +116,7 @@ If you enable/disable sits or mods, make sure to restart apache2 with
 ```bash
 $ sudo systemctl restart apache2
 ```
+
 [< Loading and Storing OBJ](./loading-obj.md) | [Home](./index.md) | [Next: Future >](./future.md)
 
 

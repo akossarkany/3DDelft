@@ -1,6 +1,6 @@
-# OBJ Masterplans and Detailed Building Storage in Database
+# 6. OBJ Masterplans and Detailed Building Storage in Database
 
-## Prerequisites
+## 6.1 Prerequisites
 3D Delft uses a PostgreSQL database and Python to establish and authenticate the connection with the database. Before inserting OBJ models, ensure that you understand the logic and network of the connections.
 
 ### Install a webserver
@@ -24,10 +24,19 @@ Ensure that [Python3+](https://www.python.org/downloads/) is installed on your s
 $ pip install psycopg2 flask flask-cors pandas
 ```
 
-
-## About
+## 6.2 Overview
 
 This part of the documentation covers the process of storing OBJ files in the server database, enabling the replacement of city parts with masterplans of future developments and detailed models of landmarks in Delft.
+
+
+
+<img width="1098" alt="RequestResponseCycle" src='./figs/schema.png'>
+
+**Figure 1.**  Schematic summary of the request response cycle between the client and the server
+
+
+## 6.3 More About
+
 
 - [ObjUpload Quick Start](./3dobjects/quickstart.md): For administators. The process of uploading `.obj` files.
 - [Server Implementation](./3dobjects/server.md): For developers. The documentation of the server side scripts.
