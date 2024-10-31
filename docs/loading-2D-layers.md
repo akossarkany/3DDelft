@@ -44,7 +44,7 @@ It allows users to access and retrieve geospatial vector data (e.g., buildings, 
 WMS (Web Map Service) is a standardized protocol that serves georeferenced map images over the Internet, providing pre-rendered maps in formats like PNG or JPEG. Unlike WFS which returns raw data, WMS focuses on visualization by delivering ready-to-display map images. This makes it ideal for base maps, background layers, and quick visualization.
 
 #### The Netherlands3D WMS functionality and the importing mechanism
-Currently (as of October 31, 2024), WMS layer import functionality is not yet available in Netherlands3D. However, the development team is actively implementing this feature and plans to release it in the near future. The importing process will follow a similar workflow to the existing WFS layer import mechanism.
+Currently (as of October 31, 2024), WMS layer import functionality is not yet available in Netherlands3D. However, the development team is actively implementing this feature and plans to release it in the next quarter. The importing process will follow a similar workflow to the existing WFS layer import mechanism.
 
 [< Configuring Municipality](./configuring-municipality.md) | [Home](./index.md) | [Next: Making 3D Tiles >](./making-3D-tiles.md)
 
