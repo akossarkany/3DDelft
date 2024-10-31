@@ -15,7 +15,7 @@ The imported OBJ model will automatically be textured with a default material. T
 On the left side of the UI, you will find vertically stacked icons. Open the tab labeled **Lagen** to manage layers.
 
 
-<img width="1098" alt="RequestResponseCycle" src='../figs/'>
+![Lagen Tab]()
 
 ### Click the **+** Icon to Import Data
 
