@@ -39,7 +39,7 @@ It allows users to access and retrieve geospatial vector data (e.g., buildings, 
 3. Go to File > Building Settings, build and run the project again.
 <img width="1259" alt="image" src="https://github.com/user-attachments/assets/773c9f58-512c-4448-9e7d-906865e0402c">
 
-### WMS
+### WMS test change
 #### What is WMS?
 WMS (Web Map Service) is a standardized protocol that serves georeferenced map images over the Internet, providing pre-rendered maps in formats like PNG or JPEG. Unlike WFS which returns raw data, WMS focuses on visualization by delivering ready-to-display map images. This makes it ideal for base maps, background layers, and quick visualization.
 
