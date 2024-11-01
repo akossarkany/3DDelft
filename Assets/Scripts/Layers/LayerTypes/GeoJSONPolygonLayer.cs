@@ -51,7 +51,7 @@ namespace Netherlands3D.Twin.Layers
             if (SpawnedVisualisations.Any(f => f.feature.GetHashCode() == feature.GetHashCode()))
                 return;
 
-            /*if (feature.Properties.ContainsKey("WIJKNUMMER")) 
+            if (feature.Properties.ContainsKey("WIJKNUMMER")) 
             {
                 RandomizeColorPerFeature = true;
             }
@@ -72,7 +72,7 @@ namespace Netherlands3D.Twin.Layers
                 {
                     RandomizeColorPerFeature = true;
                 }
-            }*/
+            }
 
 
 
