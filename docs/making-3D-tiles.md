@@ -25,7 +25,19 @@ Our Output (3D Models of Vegetation in CityGML) result:
 
 
 #### Create 3D Tiles
-*Disclaimer: There are multiple approaches to creating 3D Tiles. The following method is one of the approahces using FME. For more information regarding 3D Tiles resources, refer to [this page](https://github.com/CesiumGS/3d-tiles/blob/main/RESOURCES.md).*
+*Disclaimer: There are multiple approaches to creating 3D Tiles. The following method is one of the approahces using FME. For more information regarding 3D Tiles rules and resources, refer to [this page](https://github.com/CesiumGS/3d-tiles/blob/main/RESOURCES.md).*
+
+The workbench is simple for this step.
+![](images/workbench.jpg)
+
+1. Open a new FME workbench and read the CityGML.
+![](images/reader.jpg)
+
+2. Write it to Cesium 3D Tiles writer with coordinate reference system set to EPSG:4979.
+![](images/writer.jpg)
+
+3. Test the ouput 3D Tiles in online viewers (In this case, [Cesium ion](https://cesium.com/platform/cesium-ion/)).
+![](images/cesium.jpg)
 
 
 
@@ -33,7 +45,7 @@ Our Output (3D Models of Vegetation in CityGML) result:
 The 3D Tiles should be hosted on a server to be able to be loaded into the project. 
 Please refer to [Netherlands3D documentation](https://netherlands3d.eu/docs/developers/introduction/) for future updates on working with 3D Tiles for this project.
 
-- sth about `tileset.json` and screenshots of Netherlands3D
+<!-- - sth about `tileset.json` and screenshots of Netherlands3D -->
 
 [< Loading 2D layers](./loading-2D-layers.md) | [Home](./index.md) | [Next: Loading and Storing OBJ>](./loading-obj.md)
 
