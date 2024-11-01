@@ -1,4 +1,4 @@
-# Creating 3D Tiles
+# 5. Creating 3D Tiles
 
 #### What is 3D Tiles?
 3D Tiles is an open standard developed by the Open Geospatial Consortium (OGC) designed for streaming and rendering massive amounts of 3D geospatial data. A 3D Tiles dataset, referred to as a tileset, organizes 3D data into a hierarchical structure, allowing for efficient visualization and analysis. This standard is applicable to various types of 3D data, including city models, point clouds, and photogrammetry.
@@ -25,12 +25,15 @@ Our Output (3D Models of Vegetation in CityGML) result:
 
 
 #### Create 3D Tiles
-FME is used for creating 3D Tiles with its Cesium 3D Tiles Writer.
+*Disclaimer: There are multiple approaches to creating 3D Tiles. The following method is one of the approahces using FME. For more information regarding 3D Tiles resources, refer to [this page](https://github.com/CesiumGS/3d-tiles/blob/main/RESOURCES.md).*
+
+
 
 #### Importing 3D Tiles into the project
 The 3D Tiles should be hosted on a server to be able to be loaded into the project. 
 Please refer to [Netherlands3D documentation](https://netherlands3d.eu/docs/developers/introduction/) for future updates on working with 3D Tiles for this project.
 
+- sth about `tileset.json` and screenshots of Netherlands3D
 
 [< Loading 2D layers](./loading-2D-layers.md) | [Home](./index.md) | [Next: Loading and Storing OBJ>](./loading-obj.md)
 
