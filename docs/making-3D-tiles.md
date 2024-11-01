@@ -14,6 +14,16 @@ With 3D Tiles functionality in Netherlands3D, users can upload, navigate and exp
 
 The Feature Manipulation Engine (FME) was used to transform 2D GIS data for vegetation, specifically for elements like bushes and grass, into 3D models in the CityGML format. This process is adapted from Safe Software, which provides an approach to creating solitary vegetation objects in 3D. For further guidance, see Safe Software’s [CityGML Solitary Vegetation Object Creation Guide](https://hub.safe.com/publishers/con-terra-lab/templates/citygml-create-solitaryvegetationobject-with-implicit-representation#description).
 
+Our FME workbench:
+![alt text](FME_2D_3D.JPG)
+
+Our input (2D points of Trees managed by Delft Municipality):
+![alt text](<Step_1_Add Source Data Containing Tree Positions.JPG>)
+
+Our Output (3D Models of Vegetation in CityGML) result:
+![alt text](Result_CityGML.JPG)
+
+
 #### Create 3D Tiles
 FME is used for creating 3D Tiles with its Cesium 3D Tiles Writer.
 
