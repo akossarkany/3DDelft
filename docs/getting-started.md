@@ -1,5 +1,3 @@
-# Delft3D: Documentation 
-
 2. Getting Started
     - Prerequisites
     - Downloading the correct version of Unity

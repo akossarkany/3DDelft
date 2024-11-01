@@ -1,5 +1,3 @@
-# Delft3D: Documentation 
-
 1. Introduction
     - Overview of 3D Netherlands
     - Mission/Purpose: Why the project exists and the problems it solves.
