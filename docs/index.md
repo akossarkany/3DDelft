@@ -1,6 +1,6 @@
-# Delft3D: Documentation 
+<!-- # Delft3D: Documentation  -->
 
-### Table of Content
+### Table of Contents
 1. [Introduction](./introduction.md)
 2. [Getting Started](./getting-started.md)
 3. [Configuring Municipality](./configuring-municipality.md)
