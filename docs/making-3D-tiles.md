@@ -15,29 +15,29 @@ With 3D Tiles functionality in Netherlands3D, users can upload, navigate and exp
 The Feature Manipulation Engine (FME) was used to transform 2D GIS data for vegetation, specifically for elements like bushes and grass, into 3D models in the CityGML format. This process is adapted from Safe Software, which provides an approach to creating solitary vegetation objects in 3D. For further guidance, see Safe Software’s [CityGML Solitary Vegetation Object Creation Guide](https://hub.safe.com/publishers/con-terra-lab/templates/citygml-create-solitaryvegetationobject-with-implicit-representation#description).
 
 Our FME workbench:
-![alt text](images/FME_2D_3D.JPG)
+![alt text](images_3d/FME_2D_3D.JPG)
 
 Our input (2D points of Trees managed by Delft Municipality):
-![alt text](images/Step_1_Add%20Source%20Data%20Containing%20Tree%20Positions.JPG)
+![alt text](images_3d/Step_1_Add%20Source%20Data%20Containing%20Tree%20Positions.JPG)
 
 Our Output (3D Models of Vegetation in CityGML) result:
-![alt text](images/Result_CityGML.JPG)
+![alt text](images_3d/Result_CityGML.JPG)
 
 
 #### Create 3D Tiles
 *Disclaimer: There are multiple approaches to creating 3D Tiles. The following method is one of the approahces using FME. For more information regarding 3D Tiles rules and resources, refer to [this page](https://github.com/CesiumGS/3d-tiles/blob/main/RESOURCES.md).*
 
 The workbench is simple for this step.
-![](images/workbench.jpg)
+![alt text](images_3d/workbench.jpg)
 
 1. Open a new FME workbench and read the CityGML.
-![](images/reader.jpg)
+![alt text](images_3d/reader.jpg)
 
 2. Write it to Cesium 3D Tiles writer with coordinate reference system set to EPSG:4979.
-![](images/writer.jpg)
+![alt text](images_3d/writer.jpg)
 
 3. Test the ouput 3D Tiles in online viewers (In this case, [Cesium ion](https://cesium.com/platform/cesium-ion/)).
-![](images/cesium.jpg)
+![alt text](images_3d/cesium.jpg)
 
 
 
