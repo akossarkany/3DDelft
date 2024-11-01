@@ -30,7 +30,7 @@ This part of the documentation covers the process of storing OBJ files in the se
 
 
 
-![RequestResponseCycle](/akossarkany/3DDelft/assets/schema.png)
+![RequestResponseCycle](./3dobjects/images/schema.png)
 
 **Figure 1.**  Schematic summary of the request response cycle between the client and the server
 
