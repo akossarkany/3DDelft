@@ -1,7 +1,15 @@
 # 1. Introduction
-    - Overview of 3D Netherlands
-    - Mission/Purpose: Why the project exists and the problems it solves.
-    - Framework History & Current state: key developments, version history, and current capabilities
+<!-- - Overview of 3D Netherlands
+- Mission/Purpose: Why the project exists and the problems it solves.
+- Framework History & Current state: key developments, version history, and current capabilities -->
+
+## Netherlands3D
+
+
+
+## Mission of Delft3D
+
+
 
 [< Back to Home](./index.md) | [Next: Getting Started >](./getting-started.md)
 
