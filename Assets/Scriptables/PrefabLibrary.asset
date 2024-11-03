@@ -16,7 +16,7 @@ MonoBehaviour:
     type: 3}
   prefabGroups:
   - groupName: Basislagen
-    autoPopulateUI: 0
+    autoPopulateUI: 1
     prefabs:
     - {fileID: 3732835547605356908, guid: 6915dd70276474a0688a5fb1a9c248c0, type: 3}
     - {fileID: 3732835547605356908, guid: 65e87ace5e7c94c2dba27317474f1179, type: 3}
@@ -25,6 +25,7 @@ MonoBehaviour:
     - {fileID: 4447745080902320339, guid: 2e71ce721dd3e41c194c6fb05ad10520, type: 3}
     - {fileID: 4913964984048323131, guid: 9462ac35a03ed4ade9a4e14ea76906a3, type: 3}
     - {fileID: 1737505678239128256, guid: ba974bcd30ea6407f8cbbc1779e309b4, type: 3}
+    - {fileID: 3667510801712466502, guid: 9bedfc96573b0904d9b3a2b4a0f3307a, type: 3}
   - groupName: ObjectenBibliotheek
     autoPopulateUI: 1
     prefabs:
@@ -54,4 +55,4 @@ MonoBehaviour:
     - {fileID: 5640076176564817079, guid: 509ce6cf579d6ed4b946913dff7eaed4, type: 3}
     - {fileID: 2205593157182618917, guid: c57dd4a997e79ce43895144d0702166c, type: 3}
     - {fileID: 8209116542904522024, guid: 34882a73ff6122243a0e3e9811473e20, type: 3}
-    - {fileID: 7611614742349668521, guid: 7ddb78a6acbf44d4e84910b5684042b7, type: 3}
+    - {fileID: 8209116542904522024, guid: 34882a73ff6122243a0e3e9811473e20, type: 3}

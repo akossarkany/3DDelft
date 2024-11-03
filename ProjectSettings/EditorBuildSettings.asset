@@ -8,12 +8,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ConfigLoader.unity
     guid: b0d6ae1cb9a140c4596aeb993a81fd2d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Main.unity
     guid: 0376ef8300405754e82a4575ecae3a8b
   - enabled: 1
     path: Assets/Scenes/SetupWindow.unity
     guid: 4f0e55de06e3eae4fb2b8dd879052737
+  - enabled: 1
+    path: Assets/Scenes/Main Delft.unity
+    guid: 9e8df4ce3489299468d6661c665120bc
+  - enabled: 0
+    path: Assets/Scenes/UI_UX_playground/UI_UX.unity
+    guid: 573e0364aad4a6e4e94b5f1c33131549
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 81b771e42311b104c89a9730ee504f93,
       type: 2}

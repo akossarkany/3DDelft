@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Netherlands3D.Events;
+using Netherlands3D.Twin;
 using Netherlands3D.Twin.PackageStagingArea.eu.netherlands3d.cameras.Runtime.Scripts.Cameras;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -77,6 +78,8 @@ public class FreeCamera : MonoBehaviour
     [SerializeField] public GameObjectEvent focusOnObject;
     [SerializeField] private float focusAngle = 45.0f;
     [SerializeField] private float focusDistanceMultiplier = 2.0f;
+    [SerializeField] private bool limitToAOI = false;
+    [SerializeField] private PolyAreaOfInterest aoi;
 
     private Vector3 currentPointerPosition;
     private Vector3 zoomTarget;
@@ -122,7 +125,10 @@ public class FreeCamera : MonoBehaviour
         if(blockCameraDrag) blockCameraDrag.AddListenerStarted(LockDragging);
         if(ortographicEnabled) ortographicEnabled.AddListenerStarted(EnableOrtographic);
         if(focusOnObject) focusOnObject.AddListenerStarted(FocusOnObject);
+        if (limitToAOI) aoi.LoadBoundary(this);
     }
+
+    public bool LimitToAOI { get { return this.LimitToAOI;  } }
 
     /// <summary>
     /// Switch camera to ortographic mode and limit its controls
@@ -135,7 +141,6 @@ public class FreeCamera : MonoBehaviour
             cameraComponent.orthographic = enableOrtographic;
             return;
         }
-
         orthographicSwitcher.EnableOrthographic(enableOrtographic);
     }
 
@@ -235,12 +240,24 @@ public class FreeCamera : MonoBehaviour
     }
 
     /// <summary>
-    /// Stores previous transform position to reset to after moves that cross the bounds
+    /// Stores previous transform position to reset to after moves that cross the bounds.
+    /// If AOI is active it only stores valid position, i.e. that is in bounds
     /// </summary>
     private void StorePreviousTransform()
 	{
-		previousRotation = this.transform.rotation;
-		previousPosition = this.transform.position;
+        if (this.limitToAOI)
+        {
+            if (this.aoi.isInside())
+            {
+                previousRotation = this.transform.rotation;
+                previousPosition = this.transform.position;
+            }
+        }
+        else
+        {
+            previousRotation = this.transform.rotation;
+            previousPosition = this.transform.position;
+        }
 	}
 
     /// <summary>
@@ -277,6 +294,27 @@ public class FreeCamera : MonoBehaviour
     }
 
     /// <summary>
+    /// Reverts the position of the camera to the value stored in this.previousPosition
+    /// </summary>
+    private void RevertIfOutOfBounds()
+    {
+        SetIfOutOfBounds(this.previousPosition);
+    }
+
+    /// <summary>
+    /// Sets the position of the camera to the position stored in the function argument.
+    /// </summary>
+    /// <param name="pos"> the new position of the camera</param>
+    public void SetIfOutOfBounds(Vector3 pos)
+    {
+        if ( limitToAOI && !aoi.isInside())
+        {
+            this.transform.position = pos;
+        }
+            
+    }
+
+    /// <summary>
     /// Fly camera airplane style using stick style input
     /// </summary>
     /// <param name="value">Joystick or gamepad style input</param>
@@ -308,11 +346,15 @@ public class FreeCamera : MonoBehaviour
 
     void Update()
 	{
+        // Store previous transform 
+        StorePreviousTransform();   
         EaseDragTarget();
         if (!lockDraggingInput)
         {
             Clamp();
         }
+        // Revert if changes moved camera out of bounds
+        RevertIfOutOfBounds();
     }
 
     /// <summary>
@@ -374,7 +416,7 @@ public class FreeCamera : MonoBehaviour
             CalculateSpeed();
             var screenMove = currentPointerDelta / Screen.height;
 
-            StorePreviousTransform();
+
             var lookingDown = Vector3.Dot(Vector3.down, transform.forward);
             if (lookingDown >= dragOnPlaneThreshold)
             {

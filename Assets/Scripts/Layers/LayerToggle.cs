@@ -32,6 +32,13 @@ namespace Netherlands3D.Twin.UI.LayerInspector
 
             ProjectData.Current.LayerDeleted.AddListener(OnLayerDeleted);
             toggle.onValueChanged.AddListener(CreateOrDestroyObject);
+
+            // Destroy layer game object if toggle is of and the layer is shown
+            if (!toggle.isOn && layerGameObject != null)
+            {
+                layerGameObject.DestroyLayer();
+            }
+
         }
 
 

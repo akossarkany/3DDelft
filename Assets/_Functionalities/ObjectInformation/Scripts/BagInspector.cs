@@ -69,6 +69,8 @@ namespace Netherlands3D.Twin.Interface.BAG
 		private bool draggedBeforeRelease = false;
 		private bool waitingForRelease = false;
 
+		private const string TargetBuildingId = "0503100000000209"; // BagID Nieuwe Kerk
+
 		private void Awake()
 		{
 			mainCamera = Camera.main;
@@ -77,6 +79,8 @@ namespace Netherlands3D.Twin.Interface.BAG
 			addressTemplate.gameObject.SetActive(false);
 			contentPanel.SetActive(false);
 			placeholderPanel.SetActive(true);
+
+			ColorBuildingById(TargetBuildingId, new Color(1, 1, 1, 1));
 		}
 
 		private void Update()
@@ -107,10 +111,26 @@ namespace Netherlands3D.Twin.Interface.BAG
 			}
 		}
 
-		/// <summary>
-		/// Find objectmapping by raycast and get the BAG ID
-		/// </summary>
-		private void FindObjectMapping()
+        private void ColorBuildingById(string bagId, Color color)
+        {
+            if (bagId == TargetBuildingId)
+            {
+                color = new Color(1, 1, 1, 0); 
+            }
+
+            var objectIdAndColor = new Dictionary<string, Color>
+			{
+				{ bagId, color },
+			};
+
+            ColorSetLayer = GeometryColorizer.InsertCustomColorSet(-1, objectIdAndColor);
+        }
+
+
+        /// <summary>
+        /// Find objectmapping by raycast and get the BAG ID
+        /// </summary>
+        private void FindObjectMapping()
 		{
 			// Raycast from pointer position using main camera
 			var position = Pointer.current.position.ReadValue();
@@ -128,27 +148,41 @@ namespace Netherlands3D.Twin.Interface.BAG
 			SelectBuildingOnHit(objectMapping.getObjectID(hit.triangleIndex));
 		}
 
-		private void SelectBuildingOnHit(string bagId)
-		{
-			if (selectionlayerExists)
-			{
-				DeselectBuilding();
-			}
+        private void SelectBuildingOnHit(string bagId)
+        {
+            if (selectionlayerExists)
+            {
+                DeselectBuilding();
+            }
 
-			contentPanel.SetActive(true);
-			placeholderPanel.SetActive(false);
-			selectionlayerExists = true;
+            contentPanel.SetActive(true);
+            placeholderPanel.SetActive(false);
+            selectionlayerExists = true;
 
-			var objectIdAndColor = new Dictionary<string, Color>
-			{
-				{ bagId, new Color(1, 0, 0, 0) }
-			};
-			ColorSetLayer = GeometryColorizer.InsertCustomColorSet(-1, objectIdAndColor);
+            // Check if the selected building ID is the one we want to color
+            if (bagId == "0503100000000209")
+            {
+                // Set color to red for the specific building ID
+                var objectIdAndColor = new Dictionary<string, Color>
+        {
+            { bagId, Color.red } // Use Color.red for full red color
+        };
+                ColorSetLayer = GeometryColorizer.InsertCustomColorSet(-1, objectIdAndColor);
+            }
+            else
+            {
+                // Set default or other colors for different IDs if necessary
+                var objectIdAndColor = new Dictionary<string, Color>
+        {
+            { bagId, new Color(1, 0, 0, 0) } // Example default color (fully transparent red)
+        };
+                ColorSetLayer = GeometryColorizer.InsertCustomColorSet(-1, objectIdAndColor);
+            }
 
-			GetBAGID(bagId);
-		}
+            GetBAGID(bagId);
+        }
 
-		private void DeselectBuilding()
+        private void DeselectBuilding()
 		{
 			contentPanel.SetActive(false);
 			placeholderPanel.SetActive(true);
