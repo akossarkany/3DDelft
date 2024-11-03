@@ -14,7 +14,7 @@ namespace Netherlands3D.Twin.Layers
                 layer.isEnabled = isActive;
         }
         
-        protected virtual void Awake()
+        protected void Awake()
         {
             tileHandler = FindAnyObjectByType<CartesianTiles.TileHandler>();
             transform.SetParent(tileHandler.transform);
@@ -23,7 +23,7 @@ namespace Netherlands3D.Twin.Layers
             tileHandler.AddLayer(layer);
         }
 
-        protected virtual void OnDestroy()
+        protected void OnDestroy()
         {
             if(Application.isPlaying && tileHandler && layer)
                 tileHandler.RemoveLayer(layer);

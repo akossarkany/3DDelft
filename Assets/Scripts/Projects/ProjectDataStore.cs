@@ -7,7 +7,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using JetBrains.Annotations;
 using Netherlands3D.Twin.Layers;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,8 +25,7 @@ namespace Netherlands3D.Twin.Projects
         private readonly JsonSerializerSettings serializerSettings = new()
         {
             TypeNameHandling = TypeNameHandling.Auto,
-            Formatting = Formatting.Indented,
-            SerializationBinder = new DataContractSerializationBinder(new DefaultSerializationBinder())
+            Formatting = Formatting.Indented
         };
 
         [SerializeField] private string DefaultFileName = "NL3D_Project_";
@@ -76,9 +74,6 @@ namespace Netherlands3D.Twin.Projects
             ProjectData.Current.isLoading = true;
             JsonConvert.PopulateObject(json, ProjectData.Current, serializerSettings);
             ProjectData.Current.RootLayer.ReconstructParentsRecursive();
-
-
-            ProjectData.Current.RootLayer.UpdateLayerTreeOrder(0);
             Debug.Log("Loaded project with uuid: " + ProjectData.Current.UUID);
             ProjectData.Current.OnDataChanged.Invoke(ProjectData.Current);
             ProjectData.Current.isLoading = false;
@@ -124,7 +119,7 @@ namespace Netherlands3D.Twin.Projects
         {
             var relativePath = layerAsset.Uri.LocalPath.TrimStart('\\', '/');
             var absolutePath = Path.Combine(Application.persistentDataPath, relativePath);
-            
+
             var entry = new ZipEntry(relativePath);
             zipOutputStream.PutNextEntry(entry);
             byte[] fileBytes = File.ReadAllBytes(absolutePath);

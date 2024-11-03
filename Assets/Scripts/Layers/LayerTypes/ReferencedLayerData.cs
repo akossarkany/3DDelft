@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Netherlands3D.Twin.Layers.Properties;
 using Netherlands3D.Twin.Projects;
 using Newtonsoft.Json;
@@ -8,10 +7,10 @@ using UnityEngine;
 
 namespace Netherlands3D.Twin.Layers
 {
-    [DataContract(Namespace = "https://netherlands3d.eu/schemas/projects/layers", Name = "Prefab")]
+    [Serializable]
     public class ReferencedLayerData : LayerData
     {
-        [DataMember] private string prefabId;
+        [SerializeField, JsonProperty] private string prefabId;
         [JsonIgnore] public LayerGameObject Reference { get; }
         [JsonIgnore] public bool KeepReferenceOnDestroy { get; set; } = false;
 

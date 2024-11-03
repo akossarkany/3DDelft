@@ -112,6 +112,7 @@ namespace Netherlands3D.CartesianTiles
             }
             if (callback != null)
                 callback(tileChange);
+            yield return null;
         }
 
         public void SetVisibleTilesDirty()

@@ -5,11 +5,7 @@ using System;
 using Netherlands3D.Web;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Xml.Serialization;
 using Netherlands3D.Twin.Layers;
-using UnityEngine.Networking;
-using Netherlands3D.Twin.Layers.Properties;
-using Netherlands3D.Twin.Projects;
 
 namespace Netherlands3D.Twin
 {
@@ -28,10 +24,6 @@ namespace Netherlands3D.Twin
             var cachedDataPath = localFile.LocalFilePath;
             var sourceUrl = localFile.SourceUrl;
 
-            if ((!sourceUrl.ToLower().Contains("service=wfs") && !sourceUrl.ToLower().Contains("/wfs"))
-                || sourceUrl.ToLower().Contains("request=getmap")) //if request = getmap it means wms
-                return false;
-
             Debug.Log("Checking source WFS url: " + sourceUrl);
             wfs = new GeoJSONWFS(sourceUrl, cachedDataPath);
 
@@ -42,10 +34,8 @@ namespace Netherlands3D.Twin
 
             //If the body is a GetCapabilities request; check if the WFS supports BBOX filter and GeoJSON output
             bool IsGetCapabilitiesRequest = wfs.IsGetCapabilitiesRequest();
-            if (!IsGetCapabilitiesRequest) {
-                Debug.Log("<color=orange>WFS: No GetFeature nor GetCapabilities request type found.</color>");
+            if(!IsGetCapabilitiesRequest)
                 return false;
-            }
 
             wfs.ParseBodyAsXML();
             if (!wfs.HasBboxFilterCapability())
@@ -68,61 +58,57 @@ namespace Netherlands3D.Twin
         public void Execute(LocalFile localFile)
         {
             var sourceUrl = localFile.SourceUrl;
-            var wfsFolder = new FolderLayer(!string.IsNullOrEmpty(wfs.GetTitle()) ? wfs.GetTitle() : sourceUrl);
+            var wfsFolder = new FolderLayer(sourceUrl);
 
-            switch (wfs.requestType)
+            if (wfs.requestType == GeoJSONWFS.RequestType.GetCapabilities)
             {
-                case GeoJSONWFS.RequestType.GetCapabilities:
-                {
-                    var featureTypes = wfs.GetFeatureTypes();
+                var featureTypes = wfs.GetFeatureTypes();
 
-                    //Create a folder layer 
-                    foreach (var featureType in featureTypes)
-                    {
-                        Debug.Log("Adding WFS layer for featureType: " + featureType);
-                        AddWFSLayer(featureType.Name, sourceUrl, wfsFolder, featureType.Title);
-                    }
+                //Create a folder layer 
+                foreach (var featureType in featureTypes)
+                {
+                    Debug.Log("Adding WFS layer for featureType: " + featureType);
+                    AddWFSLayer(featureType, sourceUrl, wfsFolder);
+                }
                 
-                    wfs = null;
-                    return;
-                }
-                case GeoJSONWFS.RequestType.GetFeature:
+                wfs = null;
+                return;
+            }
+
+            if (wfs.requestType == GeoJSONWFS.RequestType.GetFeature)
+            {
+                // Get the feature type from the url
+                var featureType = string.Empty;
+                if (sourceUrl.ToLower().Contains("typename="))
                 {
-                    NameValueCollection queryParameters = new();
-                    new Uri(sourceUrl).TryParseQueryString(queryParameters);
-                    var featureType = queryParameters.Get(ParameterNameOfTypeNameBasedOnVersion());
-
-                    if (string.IsNullOrEmpty(featureType) == false)
-                    {
-                        // Can't deduct a human-readable title at the moment, we should add that we always query for the
-                        // capabilities; this also helps with things like outputFormat and CRS
-                        AddWFSLayer(featureType, sourceUrl, wfsFolder, featureType);
-                    }
-
-                    wfs = null;
-                    return;
+                    //WFS 1.0.0 uses 'typename'
+                    featureType = sourceUrl.ToLower().Split("typename=")[1].Split("&")[0];
                 }
-                default:
-                    Debug.LogError("Unrecognized WFS request type: " + wfs.requestType);
-                    break;
+                else if (sourceUrl.ToLower().Contains("typenames="))
+                {
+                    //WFS 2 uses plural 'typenames'
+                    featureType = sourceUrl.ToLower().Split("typenames=")[1].Split("&")[0];
+                }
+                AddWFSLayer(featureType, sourceUrl, wfsFolder);
+
+                wfs = null;
+                return;
             }
         }
 
-        private void AddWFSLayer(string featureType, string sourceUrl, FolderLayer folderLayer, string title)
+        private void AddWFSLayer(string featureType, string sourceUrl, FolderLayer folderLayer)
         {
+            Debug.Log("Adding WFS layer: " + featureType);
+
             // Create a GetFeature URL for the specific featureType
             UriBuilder uriBuilder = CreateLayerUri(featureType, sourceUrl);
             var getFeatureUrl = uriBuilder.Uri.ToString();
 
-            Debug.Log($"Adding WFS layer '{featureType}' with url '{getFeatureUrl}'");
-
             //Spawn a new WFS GeoJSON layer
             WFSGeoJsonLayerGameObject newLayer = Instantiate(layerPrefab);
             newLayer.LayerData.SetParent(folderLayer);
-            newLayer.Name = title;
-
-            var propertyData = newLayer.PropertyData as LayerURLPropertyData;
-            propertyData.Data = AssetUriFactory.CreateRemoteAssetUri(getFeatureUrl);
+            newLayer.Name = featureType;
+            newLayer.SetURL(getFeatureUrl);
         }
 
         private UriBuilder CreateLayerUri(string featureType, string sourceUrl)
@@ -144,36 +130,15 @@ namespace Netherlands3D.Twin
             uriBuilder.SetQueryParameter("service", "WFS");
             uriBuilder.SetQueryParameter("request", "GetFeature");
             uriBuilder.SetQueryParameter("version", wfsVersion);
-            uriBuilder.SetQueryParameter(ParameterNameOfTypeNameBasedOnVersion(), featureType);
+            uriBuilder.SetQueryParameter("typeNames", featureType);
             if (parameters.Get("outputFormat")?.ToLower() is not ("json" or "geojson"))
             {
-                var geoJsonOutputFormatString = wfs.GetGeoJsonOutputFormatString();
-                uriBuilder.SetQueryParameter(
-                    "outputFormat", 
-                    !string.IsNullOrEmpty(geoJsonOutputFormatString) ? geoJsonOutputFormatString : "application/json"
-                );
+                uriBuilder.SetQueryParameter("outputFormat", "geojson");
             }
             uriBuilder.SetQueryParameter("bbox", "{0}"); // Bbox value is injected by CartesianTileWFSLayer
-
             return uriBuilder;
         }
 
-        private string ParameterNameOfTypeNameBasedOnVersion()
-        {
-            return wfsVersion == "1.1.0" ? "typeName" : "typeNames";
-        }
-
-        [Serializable]
-        public class FeatureType
-        {
-            public string Name;
-            public string Title;
-            public string Abstract;
-            public string DefaultCRS;
-            public string[] OtherCRS;
-            public string MetadataURL;
-        }
-        
         private class GeoJSONWFS
         {
             private readonly string sourceUrl;
@@ -241,18 +206,6 @@ namespace Netherlands3D.Twin
                 return true;
             }
 
-            public string GetGeoJsonOutputFormatString()
-            {
-                XmlNode getFeatureOperationNode = ReadGetFeatureNode(this.xmlDocument, this.namespaceManager);
-                if (getFeatureOperationNode == null)
-                {
-                    Debug.Log("<color=orange>WFS GetFeature operation not found.</color>");
-                    return "";
-                }
-
-                return GetGeoJSONOutputFormat(getFeatureOperationNode, namespaceManager);
-            }
-
             public string GetWFSVersion()
             {
                 var urlLower = sourceUrl.ToLower();
@@ -268,72 +221,31 @@ namespace Netherlands3D.Twin
                 if(xmlDocument == null)
                     ParseBodyAsXML();
 
-                var serviceTypeVersion = xmlDocument.DocumentElement.Attributes["version"];
+                var serviceTypeVersion = xmlDocument.SelectSingleNode("//ows:ServiceTypeVersion", namespaceManager);
                 if (serviceTypeVersion != null)
                 {
                     Debug.Log("WFS version found: " + serviceTypeVersion.InnerText);
                     return serviceTypeVersion.InnerText;
                 }
-
                 return "";
             }
 
-            public string GetTitle()
+            public string[] GetFeatureTypes()
             {
                 if(xmlDocument == null)
                     ParseBodyAsXML();
 
-                var title = xmlDocument?
-                    .DocumentElement?
-                    .SelectSingleNode("//*[local-name()='ServiceIdentification']/*[local-name()='Title']", namespaceManager);
-                
-                return title != null ? title.InnerText : "";
-            }
+                var featureTypeListNodeInRoot = xmlDocument.SelectSingleNode("//*[local-name()='FeatureTypeList']", namespaceManager);
+                var featureTypeChildNodes = featureTypeListNodeInRoot.ChildNodes;
+                var featureTypes = new List<string>();
 
-            public IEnumerable<FeatureType> GetFeatureTypes()
-            {
-                if(xmlDocument == null)
-                    ParseBodyAsXML();
-
-                var featureTypeListNodeInRoot = xmlDocument?.DocumentElement?
-                    .SelectSingleNode("//*[local-name()='FeatureTypeList']", namespaceManager);
-                var featureTypeChildNodes = featureTypeListNodeInRoot?.ChildNodes;
-                var featureTypes = new List<FeatureType>();
-                if (featureTypeChildNodes == null)
-                {
-                    Debug.LogWarning("No feature types were found in WFS' GetCapabilities response");
-                    return featureTypes;
-                }
-
-                var wfsVersion = GetWFSVersion();
-                string namespaceVersion = wfsVersion switch
-                {
-                    "1.1.0" => "1.1.0",
-                    "2.0.0" => "2.0",
-                    _ => null
-                };
-
-                // Unsupported version
-                if (namespaceVersion == null) return featureTypes;
-
-                XmlSerializer serializer = new XmlSerializer(
-                    typeof(FeatureType), 
-                    new XmlRootAttribute("FeatureType")
-                    {
-                        Namespace = "http://www.opengis.net/wfs/" + namespaceVersion
-                    }
-                );
                 foreach (XmlNode featureTypeNode in featureTypeChildNodes)
                 {
-                    using XmlNodeReader reader = new XmlNodeReader(featureTypeNode);
-                    
-                    FeatureType featureType = serializer.Deserialize(reader) as FeatureType;
-                    if (featureType == null) continue;
-                        
-                    featureTypes.Add(featureType);
+                    var featureTypeName = featureTypeNode.SelectSingleNode(".//*[local-name()='Name']", namespaceManager).InnerText;
+                    featureTypes.Add(featureTypeName);
                 }
 
-                return featureTypes;
+                return featureTypes.ToArray();
             }
 
             private XmlNamespaceManager ReadNameSpaceManager(XmlDocument xmlDocument)
@@ -362,12 +274,6 @@ namespace Netherlands3D.Twin
 
             private bool WFSBboxFilterCapability(XmlDocument xmlDocument, XmlNamespaceManager namespaceManager = null)
             {
-                if (GetWFSVersion() != "2.0.0")
-                {
-                    // Let's guess it does, WFS prior to 2.0.0 do not report this
-                    return true;
-                }
-
                 var filterCapabilitiesNodeInRoot = xmlDocument.SelectSingleNode("//fes:SpatialOperators", namespaceManager);
                 var bboxFilter = false;
                 foreach (XmlNode spatialOperator in filterCapabilitiesNodeInRoot.ChildNodes)
@@ -383,53 +289,16 @@ namespace Netherlands3D.Twin
 
             private string GetGeoJSONOutputFormat(XmlNode xmlNode, XmlNamespaceManager namespaceManager = null)
             {
-                var wfsVersion = GetWFSVersion();
-
-                var featureOutputFormat = xmlNode.SelectSingleNode(
-                    "ows:Parameter[@name='outputFormat']", 
-                    namespaceManager
-                );
-
-                var owsAllowedValues = wfsVersion switch
-                {
-                    "2.0.0" => featureOutputFormat?.SelectSingleNode("ows:AllowedValues", namespaceManager),
-                    "1.1.0" => featureOutputFormat,
-                    _ => null
-                };
-
-                if (owsAllowedValues == null)
-                {
-                    Debug.LogWarning("WFS GetFeature operation does not expose which output formats are supported.");
-                    return "";
-                }
-
-                string outputString = "";
+                var featureOutputFormat = xmlNode.SelectSingleNode("ows:Parameter[@name='outputFormat']", namespaceManager);
+                var owsAllowedValues = featureOutputFormat.SelectSingleNode("ows:AllowedValues", namespaceManager);
                 foreach (XmlNode owsValue in owsAllowedValues.ChildNodes)
                 {
-                    var value = owsValue.InnerText;
-                    var lowerCaseValue = value.ToLower();
-                    
-                    // Immediately return outputFormats containing the word 'geojson'; this is by definition the
-                    // most specific and best option
-                    if (lowerCaseValue.Contains("geojson"))
-                    {
-                        return value; // _Return_ complete string, in case it has a variation
-                    }
-
-                    // if there is no outputFormat with the term 'geojson' in it, let's store any format with the
-                    // term json in it; this is _usually_ geojson
-                    if (lowerCaseValue.Contains("json"))
-                    {
-                        outputString = value; // _Remember_ complete string, in case it has a variation
-                    }
+                    if (owsValue.InnerText.ToLower().Contains("geojson") || owsValue.InnerText.ToLower().Contains("json"))
+                        return "geojson";
                 }
 
-                if (string.IsNullOrEmpty(outputString))
-                {
-                    Debug.LogWarning("WFS GetFeature operation does not support GeoJSON output format.");
-                }
-
-                return outputString;
+                Debug.LogWarning("WFS GetFeature operation does not support GeoJSON output format.");
+                return "";
             }
 
             private XmlNode ReadGetFeatureNode(XmlDocument xmlDocument, XmlNamespaceManager namespaceManager = null)

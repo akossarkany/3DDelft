@@ -1,22 +1,19 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Netherlands3D.Twin.Projects;
 using Newtonsoft.Json;
-using UnityEngine.Events;
+using UnityEngine;
 
 namespace Netherlands3D.Twin.Layers
 {
-    [DataContract(Namespace = "https://netherlands3d.eu/schemas/projects/layers", Name = "Root")]
+    [Serializable]
     public class RootLayer : LayerData
     {
         [JsonIgnore] public List<LayerData> SelectedLayers { get; private set; } = new();
 
-        [JsonIgnore] private UnityAction<ProjectData> projectDataListener;
-
         public RootLayer(string name) : base(name)
         {
-           
         }
 
         public void AddLayerToSelection(LayerData layer)
@@ -46,6 +43,7 @@ namespace Netherlands3D.Twin.Layers
             {
                 child.DestroyLayer();
             }
+
             ProjectData.Current.RemoveLayer(this);
             LayerDestroyed.Invoke();
         }
@@ -67,25 +65,12 @@ namespace Netherlands3D.Twin.Layers
             }
         }
 
-        public void AddChild(LayerData layer, int siblingIndex = -1)
+        public void AddChild(LayerData layer)
         {
             if (!ChildrenLayers.Contains(layer))
             {
-                if (siblingIndex >= 0 && siblingIndex < ChildrenLayers.Count)
-                    ChildrenLayers.Insert(siblingIndex, layer);
-                else
-                    ChildrenLayers.Add(layer);
+                ChildrenLayers.Add(layer);
                 ChildrenChanged.Invoke();
-            }
-        }
-
-        public void UpdateLayerTreeOrder(int index)
-        {
-            List<LayerData> children = GetLayerDataTree();
-            int count = children.Count();
-            for (int i = 0; i < count; i++)
-            {
-                children[i].RootIndex = i;
             }
         }
     }

@@ -9,6 +9,7 @@ namespace Netherlands3D.Twin.Layers.LayerTypes
 {
     public interface ILayerWithCredentials
     {
+        public CredentialsPropertySection PropertySection { get; set; }
         public UnityEvent<UnityWebRequest> OnServerResponseReceived { get; }
         public UnityEvent<string> OnURLChanged { get; }
 

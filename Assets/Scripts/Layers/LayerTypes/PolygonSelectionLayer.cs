@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Netherlands3D.Coordinates;
 using Netherlands3D.SelectionTools;
 using Netherlands3D.Twin.FloatingOrigin;
 using Netherlands3D.Twin.Layers.Properties;
+using Netherlands3D.Twin.Projects;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,12 +19,11 @@ namespace Netherlands3D.Twin.Layers
         Line = 2
     }
 
-    [DataContract(Namespace = "https://netherlands3d.eu/schemas/projects/layers", Name = "PolygonSelection")]
+    [Serializable]
     public class PolygonSelectionLayer : ReferencedLayerData, ILayerWithPropertyData//, ILayerWithPropertyPanels
     {
-        [DataMember] public List<Coordinate> OriginalPolygon { get; private set; }
-        [DataMember] private ShapeType shapeType;
-        
+        [JsonProperty] public List<Coordinate> OriginalPolygon { get; private set; }
+        [SerializeField, JsonProperty] private ShapeType shapeType;
         [JsonIgnore] private PolygonSelectionLayerPropertyData polygonPropertyData;
         [JsonIgnore] public LayerPropertyData PropertyData => polygonPropertyData;
         [JsonIgnore] public CompoundPolygon Polygon { get; set; }

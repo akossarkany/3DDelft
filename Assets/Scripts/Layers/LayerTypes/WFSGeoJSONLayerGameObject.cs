@@ -14,16 +14,16 @@ namespace Netherlands3D.Twin.Layers
         [SerializeField] private WFSGeoJSONTileDataLayer cartesianTileWFSLayer;
         public WFSGeoJSONTileDataLayer CartesianTileWFSLayer { get => cartesianTileWFSLayer; }
 
-        protected override void Awake() 
-        {
-            base.Awake();            
+        protected override void Awake() {
+            base.Awake();
+            
             CartesianTileWFSLayer.WFSGeoJSONLayer = this;
         }
 
-        protected override void Start()
+        public void SetURL(string url)
         {
-            base.Start();
-            cartesianTileWFSLayer.WfsUrl = urlPropertyData.Data.ToString();
+            this.urlPropertyData.url = url;
+            CartesianTileWFSLayer.WfsUrl = url;
         }
 
         public override void LoadProperties(List<LayerPropertyData> properties)
@@ -32,6 +32,7 @@ namespace Netherlands3D.Twin.Layers
             if (urlProperty != null)
             {
                 this.urlPropertyData = urlProperty;
+                CartesianTileWFSLayer.WfsUrl = urlProperty.url;
             }
         }
     }
