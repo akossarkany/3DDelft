@@ -1,7 +1,7 @@
 # 7. Future
 This guide explains how to maintain your Delft3D project while incorporating updates from the Netherlands3D platform. Following these practices will help you stay current with upstream improvements while preserving your Delft-specific customizations.
 
-## Initial Setup
+## 7.1 Initial Setup
 First-time setup for synchronization:
 
 ```bash
@@ -13,7 +13,7 @@ git remote add upstream https://github.com/Netherlands3D/twin.git
 git remote -v
 ```
 
-## Regular Update Workflow
+## 7.2 Regular Update Workflow
 1. Prepare Your Local Repository
 ```bash
 git checkout main
@@ -35,7 +35,7 @@ git log HEAD..upstream/main --oneline
 git merge upstream/main
 ```
 
-## Handle Merge Conflicts
+## 7.3 Handle Merge Conflicts
 1. Review Conflicts
 2. Resolve Each Conflict
 	* Open conflicted files in your editor
@@ -52,7 +52,7 @@ git add <resolved-file>
 git commit -m "Merge Netherlands3D updates and resolve conflicts"
 ```
 
-## Push Updates and documentation
+## 7.4 Push Updates and documentation
 1. Push the merged changes
 ```bash
 git push origin main
@@ -63,7 +63,7 @@ git push origin main
 echo "Merge $(date): Updated to Netherlands3D version $(git rev-parse --short upstream/main)" >> docs/MERGE_HISTORY.md
 ```
 
-## Troubleshooting
+## 7.5 Troubleshooting
 If Things Go Wrong
 ```bash
 git merge --abort
