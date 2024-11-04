@@ -15,7 +15,7 @@ $ sudo a2enmod wsgi
 
 
 ### Install PostgreSQL
-Refer to the official PostgreSQL installation guide [here](https://www.postgresql.org/download/). Once postgres is installed, read [this page](./pages/3dobjects/postgresdb.md) on how to set up a postgres database for this application.
+Refer to the official PostgreSQL installation guide [here](https://www.postgresql.org/download/). Once postgres is installed, read [this page](./3dobjects/postgresdb.md) on how to set up a postgres database for this application.
 
 ### Install Python and Required Modules
 Ensure that [Python3+](https://www.python.org/downloads/) is installed on your system along with the necessary modules: `psycopg2` for PostgreSQL database interaction and `Flask` for managing the web server and authentication. You can install these dependencies with `pip`:
@@ -30,7 +30,7 @@ This part of the documentation covers the process of storing OBJ files in the se
 
 
 
-![RequestResponseCycle](./3dobjects/images/schema.png)
+![RequestResponseCycle](./img/schema.png)
 
 **Figure 1.**  Schematic summary of the request response cycle between the client and the server
 

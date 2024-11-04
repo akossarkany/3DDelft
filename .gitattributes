@@ -74,7 +74,7 @@
 *.gif lfs-file
 *.iff lfs-file
 *.pict lfs-file
-*.png lfs-file
+*.png binary 
 *.psd lfs-file
 *.svg lfs-file
 *.tga lfs-file
