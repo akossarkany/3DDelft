@@ -9,7 +9,7 @@
 ## Delft3D
 Delft3D is an online 3D viewer for the Municipality of Delft, customized using the Netherlands3D platform. It aims to provide a valuable tool for different stakeholders by enhancing collaboration, data-driven decision-making, and sustainable city management. The platform will provide various use cases in urban planning, design, communication, and development. Along with the future development of Netherlands3D, further features and technical improvements will be added.
 
-
+ 
 
 [< Back to Home](./index.md) | [Next: Getting Started >](./getting-started.md)
 
