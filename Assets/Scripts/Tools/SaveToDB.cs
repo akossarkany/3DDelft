@@ -25,12 +25,14 @@ public class SaveToDB : MonoBehaviour
     [SerializeField] private InputField descriptionInput;
     [SerializeField] private Dropdown modelDropdown;  // Assign this in the Inspector
     [SerializeField] private Toggle masterplanToggle;  // Assign this in the Inspector (Toggle for setting as masterplan)
+    [SerializeField] private Toggle deleteToggle;  // Assign this in the Inspector (Toggle for setting for deletion)
     [SerializeField] private Text statusMessage; // Text element to display messages to the user
 
     [SerializeField] private string saveDirectory = "Assets/ImportedOBJ_permanent";  // Directory to save models and metadata
     [SerializeField] private string senObjTo = "https://3ddelft01.bk.tudelft.nl:80/upload/object";  // URL for POST request (replace with actual URL)
     [SerializeField] private string sendMetaTo = "https://3ddelft01.bk.tudelft.nl:80/upload/meta";
-    [SerializeField] private string existUrl = "https://3ddelft01.bk.tudelft.nl:80/exists/object/";
+    [SerializeField] private string existUrl = "https://3ddelft01.bk.tudelft.nl:80/exists/object";
+    [SerializeField] private string removeUrl = "https://3ddelft01.bk.tudelft.nl:80/remove";
 
     private List<GameObject> selectableModels = new List<GameObject>();  // Store available models
     private bool isPopupVisible = false;  // Track the popup visibility state
@@ -105,6 +107,37 @@ public class SaveToDB : MonoBehaviour
         }
     }
 
+    private IEnumerator remove(string uuid)
+    {
+        if (LoginManager.token is not string)
+        {
+            Debug.LogError("No authentication token.");
+            yield break;
+        }
+
+        string url = Path.Combine(removeUrl, uuid);
+        using (UnityWebRequest www = new UnityWebRequest(url, "DELETE"))
+        {
+            www.downloadHandler = new DownloadHandlerBuffer();
+            www.SetRequestHeader("Authorization", $"Bearer {LoginManager.token}");
+            www.SetRequestHeader("Content-Type", "application/json");
+            www.certificateHandler = new BypassCertificateHandler();
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                statusMessage.text = "Model removed successfully!";
+                statusMessage.gameObject.SetActive(true);  // Show the status message
+                StartCoroutine(ClearStatusMessageAfterDelay(5));
+                Debug.Log("Item removed from database successfully.");
+            }
+            else
+            {
+                Debug.LogError("Failed to remove object!");
+            }
+        }
+    }
+
     // When the user clicks the "Save" button in the popup
     public void OnSaveButtonClick()
     {
@@ -114,6 +147,13 @@ public class SaveToDB : MonoBehaviour
             statusMessage.text = "No model selected.";
             statusMessage.gameObject.SetActive(true);  // Show the status message
             StartCoroutine(ClearStatusMessageAfterDelay(5));  // Hide after 5 seconds
+            return;
+        }
+
+        Debug.Log("Delete is " + (deleteToggle.isOn ? "on" : "off"));
+        if (deleteToggle.isOn)
+        {
+            StartCoroutine(remove(selectedlayer.Id));
             return;
         }
 
@@ -179,7 +219,7 @@ public class SaveToDB : MonoBehaviour
         if (isPopupVisible)
         {
             var selectedLayers = ProjectData.Current.RootLayer.SelectedLayers.ToList();
-            if (selectedLayers.Count() > 1)
+            if (selectedLayers.Count() != 1)
             {
                 Debug.LogError("Only one layer should be selected");
                 return;
