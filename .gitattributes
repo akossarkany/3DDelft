@@ -70,7 +70,7 @@
 *.ai lfs-file
 *.bmp lfs-file
 *.dds lfs-file
-*.jpg lfs-file
+*.jpg binary
 *.gif lfs-file
 *.iff lfs-file
 *.pict lfs-file
